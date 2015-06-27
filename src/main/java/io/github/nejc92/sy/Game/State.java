@@ -1,4 +1,4 @@
-package io.github.nejc92.sy.game;
+package io.github.nejc92.sy.Game;
 
 import io.github.nejc92.mcts.MctsDomainState;
 import io.github.nejc92.sy.players.Player;

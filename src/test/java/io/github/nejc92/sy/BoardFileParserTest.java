@@ -1,6 +1,6 @@
 package io.github.nejc92.sy;
 
-import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.Game.Action;
 import org.junit.Test;
 
 import java.util.List;

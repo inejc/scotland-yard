@@ -1,6 +1,6 @@
 package io.github.nejc92.sy.players;
 
-import io.github.nejc92.sy.game.State;
+import io.github.nejc92.sy.Game.State;
 
 public class RandomHider extends Player {
 

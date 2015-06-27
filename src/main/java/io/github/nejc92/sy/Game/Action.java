@@ -1,4 +1,4 @@
-package io.github.nejc92.sy.game;
+package io.github.nejc92.sy.Game;
 
 public class Action {
 

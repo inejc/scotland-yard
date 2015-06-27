@@ -1,6 +1,6 @@
 package io.github.nejc92.sy;
 
-import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.Game.Action;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
