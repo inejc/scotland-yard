@@ -25,6 +25,7 @@ public class Board {
     }
 
     protected List<Action> getPossibleActionsForPosition(int position) {
-        return boardPositions.get(position - 1);
+        int positionListIndex = position - 1;
+        return boardPositions.get(positionListIndex);
     }
 }
