@@ -1,8 +1,8 @@
 package io.github.nejc92.sy.players;
 
 import io.github.nejc92.mcts.MctsDomainAgent;
-import io.github.nejc92.sy.Game.Action;
-import io.github.nejc92.sy.Game.State;
+import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.game.State;
 
 import java.util.Collections;
 import java.util.List;
