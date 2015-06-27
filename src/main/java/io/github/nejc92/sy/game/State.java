@@ -74,12 +74,21 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public MctsDomainState performActionForCurrentAgent(Action action) {
-        // todo
+        validateIsAvailableAction(action);
+        // remove transportation card
+        getCurrentAgent().setBoardPosition(action.destination);
         selectNextPlayer();
         return this;
     }
 
+    private void validateIsAvailableAction(Action action) {
+        if (!getAvailableActionsForCurrentAgent().contains(action)) {
+            throw new IllegalArgumentException("Error: invalid action passed as function parameter");
+        }
+    }
+
     private void selectNextPlayer() {
-        currentPlayerIndex = currentPlayerIndex++ % NUMBER_OF_PLAYERS;
+        currentPlayerIndex = ++currentPlayerIndex % NUMBER_OF_PLAYERS;
+        previousPlayerIndex = ++previousPlayerIndex % NUMBER_OF_PLAYERS;
     }
 }
