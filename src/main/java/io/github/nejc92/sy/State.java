@@ -4,7 +4,7 @@ import io.github.nejc92.mcts.MctsDomainState;
 
 import java.util.List;
 
-public class GameState implements MctsDomainState<String, Player> {
+public class State implements MctsDomainState<String, Player> {
 
     @Override
     public boolean isTerminal() {
