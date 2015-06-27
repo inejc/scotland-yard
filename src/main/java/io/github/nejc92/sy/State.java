@@ -4,7 +4,18 @@ import io.github.nejc92.mcts.MctsDomainState;
 
 import java.util.List;
 
-public class State implements MctsDomainState<String, Player> {
+public class State implements MctsDomainState<Action, Player> {
+
+    private final Board board;
+
+    public static State initialize() {
+        Board board = Board.initialize();
+        return new State(board);
+    }
+
+    private State(Board board) {
+        this.board = board;
+    }
 
     @Override
     public boolean isTerminal() {
@@ -27,12 +38,12 @@ public class State implements MctsDomainState<String, Player> {
     }
 
     @Override
-    public List<String> getAvailableActionsForCurrentAgent() {
+    public List<Action> getAvailableActionsForCurrentAgent() {
         return null;
     }
 
     @Override
-    public MctsDomainState performActionForCurrentAgent(String s) {
+    public MctsDomainState performActionForCurrentAgent(Action action) {
         return null;
     }
 }

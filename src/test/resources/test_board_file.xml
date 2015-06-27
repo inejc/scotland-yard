@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<boardPositions>
+    <boardPosition id="1">
+        <actions>
+            <action>
+                <transportation>taxi</transportation>
+                <destination>2</destination>
+            </action>
+            <action>
+                <transportation>bus</transportation>
+                <destination>3</destination>
+            </action>
+            <action>
+                <transportation>underground</transportation>
+                <destination>6</destination>
+            </action>
+        </actions>
+    </boardPosition>
+    <boardPosition id="2">
+        <actions>
+            <action>
+                <transportation>taxi</transportation>
+                <destination>1</destination>
+            </action>
+            <action>
+                <transportation>bus</transportation>
+                <destination>4</destination>
+            </action>
+            <action>
+                <transportation>boat</transportation>
+                <destination>5</destination>
+            </action>
+        </actions>
+    </boardPosition>
+</boardPositions>
