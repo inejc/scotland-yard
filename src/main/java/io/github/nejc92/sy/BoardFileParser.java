@@ -1,5 +1,6 @@
 package io.github.nejc92.sy;
 
+import io.github.nejc92.sy.game.Action;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,11 +21,11 @@ public class BoardFileParser extends DefaultHandler {
     private boolean isTransportation;
     private boolean isDestination;
 
-    protected BoardFileParser(String fileName) {
+    public BoardFileParser(String fileName) {
         this.fileName = fileName;
     }
 
-    protected List<List<Action>> getParsedData() {
+    public List<List<Action>> getParsedData() {
         SAXParser parser = createSaxParser();
         tryToParseDataToList(parser);
         return boardPositions;

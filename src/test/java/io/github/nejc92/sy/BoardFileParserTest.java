@@ -1,5 +1,6 @@
 package io.github.nejc92.sy;
 
+import io.github.nejc92.sy.game.Action;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public class BoardFileParserTest {
     public void testGetParsedDataLength() {
         List<List<Action>> boardPositions = parser.getParsedData();
         assertEquals(2, boardPositions.size());
+        assertEquals(3, boardPositions.get(0).size());
+        assertEquals(3, boardPositions.get(1).size());
     }
 
     @Test

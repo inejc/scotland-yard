@@ -1,4 +1,6 @@
-package io.github.nejc92.sy;
+package io.github.nejc92.sy.game;
+
+import io.github.nejc92.sy.BoardFileParser;
 
 import java.util.ArrayList;
 import java.util.List;
