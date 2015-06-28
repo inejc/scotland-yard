@@ -19,6 +19,7 @@ public class RandomSeeker extends Player {
         this.color = color;
     }
 
+    @Override
     public int getBoardPosition() {
         return super.getBoardPosition();
     }

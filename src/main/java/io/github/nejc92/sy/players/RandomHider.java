@@ -17,6 +17,7 @@ public class RandomHider extends Player {
         return this.getBoardPosition() == boardPosition;
     }
 
+    @Override
     public void addTicket(Action.Transportation transportation) {
         super.addTicket(transportation);
     }
