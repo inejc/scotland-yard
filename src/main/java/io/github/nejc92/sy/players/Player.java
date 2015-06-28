@@ -77,6 +77,21 @@ public abstract class Player implements MctsDomainAgent<State> {
         }
     }
 
+    public boolean hasTicket(Action.Transportation transportation) {
+        switch (transportation) {
+            case TAXI:
+                return taxiTickets > 0;
+            case BUS:
+                return busTickets > 0;
+            case UNDERGROUND:
+                return undergroundTickets > 0;
+            case BOAT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
         while (!state.isTerminal()) {
@@ -86,7 +101,7 @@ public abstract class Player implements MctsDomainAgent<State> {
         return state;
     }
 
-    private Action getActionFromStatesAvailableActions(State state) {
+    protected Action getActionFromStatesAvailableActions(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         Collections.shuffle(availableActions);
         return availableActions.get(0);
