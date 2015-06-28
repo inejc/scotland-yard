@@ -6,6 +6,19 @@ public class Action {
         TAXI, BUS, UNDERGROUND, BOAT
     }
 
-    public Transportation transportation;
-    public int destination;
+    private final Transportation transportation;
+    private final int destination;
+
+    public Action(Transportation transportation, int destination) {
+        this.transportation = transportation;
+        this.destination = destination;
+    }
+
+    public Transportation getTransportation() {
+        return transportation;
+    }
+
+    public int getDestination() {
+        return destination;
+    }
 }

@@ -68,15 +68,16 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public List<Action> getAvailableActionsForCurrentAgent() {
-        int currentPlayerPosition = getCurrentAgent().getBoardPosition();
-        return board.getPossibleActionsForPosition(currentPlayerPosition);
+        //int currentPlayerPosition = getCurrentAgent().getBoardPosition();
+        //return board.getPossibleActionsForPosition(currentPlayerPosition);
+        return null;
     }
 
     @Override
     public MctsDomainState performActionForCurrentAgent(Action action) {
         validateIsAvailableAction(action);
         // remove transportation card
-        getCurrentAgent().setBoardPosition(action.destination);
+        //getCurrentAgent().setBoardPosition(action.getDestination());
         selectNextPlayer();
         return this;
     }

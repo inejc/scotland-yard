@@ -17,7 +17,8 @@ public class BoardFileParser extends DefaultHandler {
     private final String fileName;
     private List<List<Action>> boardPositions;
     private List<Action> temporaryPosition;
-    private Action temporaryAction;
+    private Action.Transportation temporaryTransportation;
+    private int temporaryDestination;
     private boolean isTransportation;
     private boolean isDestination;
 
@@ -62,8 +63,6 @@ public class BoardFileParser extends DefaultHandler {
             throws SAXException {
         if (elementName.equalsIgnoreCase("boardPosition"))
             temporaryPosition = new ArrayList<>();
-        else if (elementName.equalsIgnoreCase("action"))
-            temporaryAction = new Action();
         else if (elementName.equalsIgnoreCase("transportation"))
             isTransportation = true;
         else if (elementName.equalsIgnoreCase("destination"))
@@ -74,18 +73,20 @@ public class BoardFileParser extends DefaultHandler {
     public void endElement(String uri, String localName, String elementName) throws SAXException {
         if (elementName.equalsIgnoreCase("boardPosition"))
             boardPositions.add(temporaryPosition);
-        else if (elementName.equalsIgnoreCase("action"))
+        else if (elementName.equalsIgnoreCase("action")) {
+            Action temporaryAction = new Action(temporaryTransportation, temporaryDestination);
             temporaryPosition.add(temporaryAction);
+        }
     }
 
     @Override
     public void characters(char[] character, int start, int length) throws SAXException {
         if (isTransportation) {
-            temporaryAction.transportation = charactersToTransportation(character, start, length);
+            temporaryTransportation = charactersToTransportation(character, start, length);
             isTransportation = false;
         }
         else if (isDestination) {
-            temporaryAction.destination = charactersToDestination(character, start, length);
+            temporaryDestination = charactersToDestination(character, start, length);
             isDestination = false;
         }
     }

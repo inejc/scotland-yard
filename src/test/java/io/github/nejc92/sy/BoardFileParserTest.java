@@ -23,23 +23,22 @@ public class BoardFileParserTest {
     @Test
     public void testGetParsedDataPosition1Actions() {
         List<List<Action>> boardPositions = parser.getParsedData();
-        assertEquals(Action.Transportation.TAXI, boardPositions.get(0).get(0).transportation);
-        assertEquals(2, boardPositions.get(0).get(0).destination);
-        assertEquals(Action.Transportation.BUS, boardPositions.get(0).get(1).transportation);
-        assertEquals(3, boardPositions.get(0).get(1).destination);
-        assertEquals(Action.Transportation.UNDERGROUND, boardPositions.get(0).get(2).transportation);
-        assertEquals(6, boardPositions.get(0).get(2).destination);
+        assertEquals(Action.Transportation.TAXI, boardPositions.get(0).get(0).getTransportation());
+        assertEquals(2, boardPositions.get(0).get(0).getDestination());
+        assertEquals(Action.Transportation.BUS, boardPositions.get(0).get(1).getTransportation());
+        assertEquals(3, boardPositions.get(0).get(1).getDestination());
+        assertEquals(Action.Transportation.UNDERGROUND, boardPositions.get(0).get(2).getTransportation());
+        assertEquals(6, boardPositions.get(0).get(2).getDestination());
     }
 
     @Test
     public void testGetParsedDataPosition2Actions() {
         List<List<Action>> boardPositions = parser.getParsedData();
-        assertEquals(Action.Transportation.TAXI, boardPositions.get(1).get(0).transportation);
-        assertEquals(1, boardPositions.get(1).get(0).destination);
-        assertEquals(Action.Transportation.BUS, boardPositions.get(1).get(1).transportation);
-        assertEquals(4, boardPositions.get(1).get(1).destination);
-        assertEquals(Action.Transportation.BOAT, boardPositions.get(1).get(2).transportation);
-        assertEquals(5, boardPositions.get(1).get(2).destination);
-
+        assertEquals(Action.Transportation.TAXI, boardPositions.get(1).get(0).getTransportation());
+        assertEquals(1, boardPositions.get(1).get(0).getDestination());
+        assertEquals(Action.Transportation.BUS, boardPositions.get(1).get(1).getTransportation());
+        assertEquals(4, boardPositions.get(1).get(1).getDestination());
+        assertEquals(Action.Transportation.BOAT, boardPositions.get(1).get(2).getTransportation());
+        assertEquals(5, boardPositions.get(1).get(2).getDestination());
     }
 }

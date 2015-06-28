@@ -4,15 +4,23 @@ import io.github.nejc92.sy.game.State;
 
 public class RandomSeeker extends Player {
 
+    private static final int TAXI_TICKETS = 10;
+    private static final int BUS_TICKETS = 8;
+    private static final int UNDERGROUND_TICKETS = 4;
+
     public enum Color {
         BLUE, YELLOW, RED, GREEN, BLACK
     }
 
-    private Color color;
+    private final Color color;
 
     public RandomSeeker(Color color, int boardPosition) {
-        super(Type.SEEKER, boardPosition);
+        super(Type.SEEKER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.color = color;
+    }
+
+    public int getBoardPosition() {
+        return super.getBoardPosition();
     }
 
     public Color getColor() {

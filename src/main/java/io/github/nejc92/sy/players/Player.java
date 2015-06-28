@@ -13,24 +13,68 @@ public abstract class Player implements MctsDomainAgent<State> {
         HIDER, SEEKER
     }
 
-    private Type type;
+    private final Type type;
     private int boardPosition;
+    private int taxiTickets;
+    private int busTickets;
+    private int undergroundTickets;
 
-    protected Player(Type type, int boardPosition) {
-        this.boardPosition = boardPosition;
+    protected Player(Type type, int boardPosition, int taxiTickets, int busTickets, int undergroundTickets) {
         this.type = type;
-    }
-
-    public int getBoardPosition() {
-        return boardPosition;
-    }
-
-    public void setBoardPosition(int newBoardPosition) {
-        boardPosition = newBoardPosition;
+        this.boardPosition = boardPosition;
+        this.taxiTickets = taxiTickets;
+        this.busTickets = busTickets;
+        this.undergroundTickets = undergroundTickets;
     }
 
     public Type getType() {
         return type;
+    }
+
+    protected int getBoardPosition() {
+        return boardPosition;
+    }
+
+    public void moveToBoardPosition(int newBoardPosition) {
+        boardPosition = newBoardPosition;
+    }
+
+    protected int getTaxiTickets() {
+        return taxiTickets;
+    }
+
+    protected int getBusTickets() {
+        return busTickets;
+    }
+
+    protected int getUndergroundTickets() {
+        return undergroundTickets;
+    }
+
+    protected void addTicket(Action.Transportation transportation) {
+        switch (transportation) {
+            case TAXI:
+                taxiTickets += 1;
+                break;
+            case BUS:
+                busTickets += 1;
+                break;
+            case UNDERGROUND:
+                undergroundTickets += 1;
+        }
+    }
+
+    public void removeTicket(Action.Transportation transportation) {
+        switch (transportation) {
+            case TAXI:
+                taxiTickets -= 1;
+                break;
+            case BUS:
+                busTickets -= 1;
+                break;
+            case UNDERGROUND:
+                undergroundTickets -= 1;
+        }
     }
 
     @Override

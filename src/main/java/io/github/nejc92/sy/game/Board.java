@@ -2,7 +2,6 @@ package io.github.nejc92.sy.game;
 
 import io.github.nejc92.sy.BoardFileParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
@@ -17,9 +16,7 @@ public class Board {
         return board;
     }
 
-    private Board() {
-        this.boardPositions = new ArrayList<>();
-    }
+    private Board() {}
 
     private void initializeBoardPositions() {
         BoardFileParser parser = new BoardFileParser(BOARD_FILE_NAME);
