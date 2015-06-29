@@ -1,6 +1,5 @@
 package io.github.nejc92.sy.players;
 
-import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
 
 public class RandomHider extends Player {
@@ -22,16 +21,6 @@ public class RandomHider extends Player {
         return this.getBoardPosition() == boardPosition;
     }
 
-    @Override
-    public void addTicket(Action.Transportation transportation) {
-        super.addTicket(transportation);
-    }
-
-    @Override
-    public double getRewardFromTerminalState(State state) {
-        return 0;
-    }
-
     public void removeDoubleMoveCard() {
         doubleMoveCards--;
     }
@@ -46,5 +35,25 @@ public class RandomHider extends Player {
 
     public boolean hasBlackFareCard() {
         return blackFareCards > 0;
+    }
+
+    @Override
+    public void addTaxiTicket() {
+        super.addTaxiTicket();
+    }
+
+    @Override
+    public void addBusTicket() {
+        super.addBusTicket();
+    }
+
+    @Override
+    public void addUndergroundTicket() {
+        super.addUndergroundTicket();
+    }
+
+    @Override
+    public double getRewardFromTerminalState(State state) {
+        return 0;
     }
 }

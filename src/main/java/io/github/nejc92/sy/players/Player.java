@@ -51,45 +51,40 @@ public abstract class Player implements MctsDomainAgent<State> {
         return undergroundTickets;
     }
 
-    protected void addTicket(Action.Transportation transportation) {
-        switch (transportation) {
-            case TAXI:
-                taxiTickets += 1;
-                break;
-            case BUS:
-                busTickets += 1;
-                break;
-            case UNDERGROUND:
-                undergroundTickets += 1;
-        }
+    protected void addTaxiTicket() {
+        taxiTickets += 1;
     }
 
-    public void removeTicket(Action.Transportation transportation) {
-        switch (transportation) {
-            case TAXI:
-                taxiTickets -= 1;
-                break;
-            case BUS:
-                busTickets -= 1;
-                break;
-            case UNDERGROUND:
-                undergroundTickets -= 1;
-        }
+    protected void addBusTicket() {
+        busTickets += 1;
     }
 
-    public boolean hasTicket(Action.Transportation transportation) {
-        switch (transportation) {
-            case TAXI:
-                return taxiTickets > 0;
-            case BUS:
-                return busTickets > 0;
-            case UNDERGROUND:
-                return undergroundTickets > 0;
-            case BOAT:
-                return true;
-            default:
-                return false;
-        }
+    protected void addUndergroundTicket() {
+        undergroundTickets += 1;
+    }
+
+    public void removeTaxiTicket() {
+        taxiTickets -= 1;
+    }
+
+    public void removeBusTicket() {
+        busTickets -= 1;
+    }
+
+    public void removeUndergroundTicket() {
+        undergroundTickets -= 1;
+    }
+
+    public boolean hasTaxiTickets() {
+        return taxiTickets > 0;
+    }
+
+    public boolean hasBusTickets() {
+        return busTickets > 0;
+    }
+
+    public boolean hasUndergroundTickets() {
+        return undergroundTickets > 0;
     }
 
     @Override

@@ -14,7 +14,7 @@ public class RandomSeeker extends Player {
 
     private final Color color;
 
-    public RandomSeeker(Color color, int boardPosition) {
+    public RandomSeeker(int boardPosition, Color color) {
         super(Type.SEEKER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.color = color;
     }
