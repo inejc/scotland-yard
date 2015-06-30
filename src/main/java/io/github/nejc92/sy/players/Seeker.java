@@ -2,7 +2,7 @@ package io.github.nejc92.sy.players;
 
 import io.github.nejc92.sy.game.State;
 
-public class RandomSeeker extends Player {
+public abstract class Seeker extends Player {
 
     private static final int TAXI_TICKETS = 10;
     private static final int BUS_TICKETS = 8;
@@ -14,14 +14,9 @@ public class RandomSeeker extends Player {
 
     private final Color color;
 
-    public RandomSeeker(int boardPosition, Color color) {
-        super(Type.SEEKER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
+    public Seeker(Operator operator, int boardPosition, Color color) {
+        super(operator, Type.SEEKER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.color = color;
-    }
-
-    @Override
-    public int getBoardPosition() {
-        return super.getBoardPosition();
     }
 
     public Color getColor() {

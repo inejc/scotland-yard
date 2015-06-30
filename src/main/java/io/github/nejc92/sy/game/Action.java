@@ -3,7 +3,7 @@ package io.github.nejc92.sy.game;
 public class Action {
 
     public enum Transportation {
-        TAXI, BUS, UNDERGROUND, BOAT
+        TAXI, BUS, UNDERGROUND, BOAT, BLACKFARE
     }
 
     private final Transportation transportation;
