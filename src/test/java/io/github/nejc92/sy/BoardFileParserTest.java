@@ -38,7 +38,7 @@ public class BoardFileParserTest {
         assertEquals(1, boardPositions.get(1).get(0).getDestination());
         assertEquals(Action.Transportation.BUS, boardPositions.get(1).get(1).getTransportation());
         assertEquals(4, boardPositions.get(1).get(1).getDestination());
-        assertEquals(Action.Transportation.BOAT, boardPositions.get(1).get(2).getTransportation());
+        assertEquals(Action.Transportation.BLACK_FARE, boardPositions.get(1).get(2).getTransportation());
         assertEquals(5, boardPositions.get(1).get(2).getDestination());
     }
 }

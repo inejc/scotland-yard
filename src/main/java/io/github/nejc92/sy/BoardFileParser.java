@@ -105,7 +105,7 @@ public class BoardFileParser extends DefaultHandler {
             case "underground":
                 return Action.Transportation.UNDERGROUND;
             case "boat":
-                return Action.Transportation.BOAT;
+                return Action.Transportation.BLACK_FARE;
             default:
                 throw new IllegalStateException("Error: invalid transportation data in board file.");
         }

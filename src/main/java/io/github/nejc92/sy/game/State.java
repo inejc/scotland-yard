@@ -1,7 +1,9 @@
 package io.github.nejc92.sy.game;
 
 import io.github.nejc92.mcts.MctsDomainState;
+import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
+import io.github.nejc92.sy.players.Seeker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +18,6 @@ public class State implements MctsDomainState<Action, Player> {
     private final Board board;
     private int currentRound;
     private final Player[] players;
-    private final int numberOfPlayers;
     private int currentPlayerIndex;
     private int previousPlayerIndex;
     private List<Integer> hidersPossiblePosition;
@@ -24,7 +25,9 @@ public class State implements MctsDomainState<Action, Player> {
 
     public static State initialize(Player[] players, List<Integer> startingPositions) {
         Board board = Board.initialize();
-        State state = new State(board, players, startingPositions);
+        List<Integer> hidersPossibleLocations = new ArrayList<>(startingPositions);
+        hidersPossibleLocations.removeAll(getSeekersPositions(players));
+        State state = new State(board, players, hidersPossibleLocations);
         state.setHidersPositionFromCurrentPlayersPov();
         return state;
     }
@@ -33,9 +36,8 @@ public class State implements MctsDomainState<Action, Player> {
         this.board = board;
         this.currentRound = 1;
         this.players = players;
-        this.numberOfPlayers = players.length;
         this.currentPlayerIndex = 0;
-        this.previousPlayerIndex = numberOfPlayers - 1;
+        this.previousPlayerIndex = players.length - 1;
         this.hidersPossiblePosition = hidersPossiblePosition;
     }
 
@@ -48,7 +50,7 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     public int getMostProbableHidersPosition() {
-        return 0;
+        return hidersPossiblePosition.get(0);
     }
 
     private void reCalculateHidersPossibleLocations(Action.Transportation transportation) {
@@ -57,17 +59,17 @@ public class State implements MctsDomainState<Action, Player> {
             newHidersPossibleLocations.add(getPreviousAgent().getBoardPosition());
         else{
             for (int position : hidersPossiblePosition) {
-                if (transportation == Action.Transportation.BLACKFARE)
+                if (transportation == Action.Transportation.BLACK_FARE)
                     newHidersPossibleLocations.addAll(board.getDestinationsForPosition(position));
                 else
                     newHidersPossibleLocations.addAll(board.getTransportationDestinationsForPosition(transportation, position));
             }
-            newHidersPossibleLocations.removeAll(getSeekersPositions());
+            newHidersPossibleLocations.removeAll(getSeekersPositions(players));
         }
         hidersPossiblePosition = newHidersPossibleLocations;
     }
 
-    private List<Integer> getSeekersPositions() {
+    private static List<Integer> getSeekersPositions(Player[] players) {
         return Arrays.stream(players).skip(0).map(Player::getBoardPosition).collect(Collectors.toList());
     }
 
@@ -94,15 +96,36 @@ public class State implements MctsDomainState<Action, Player> {
     @Override
     public List<Action> getAvailableActionsForCurrentAgent() {
         Player currentPlayer = getCurrentAgent();
-        int currentPlayersPosition;
-        if (currentPlayer.isHider())
-            currentPlayersPosition = hidersPositionFromCurrentPlayersPov;
-        else
-            currentPlayersPosition = currentPlayer.getBoardPosition();
-        List<Action> allPossibleActions = board.getPossibleActionsForPosition(currentPlayersPosition);
-        List<Action> availableActions = new ArrayList<>(allPossibleActions);
-        // remove impossible and no tickets
+        if (currentPlayer.isHider()) {
+            return getAvailableActionsForHider((Hider)currentPlayer);
+        }
+        else {
+            return getAvailableActionsForSeeker((Seeker)currentPlayer);
+        }
+    }
+
+    private List<Action> getAvailableActionsForHider(Hider hider) {
+        List<Action> availableActions = new ArrayList<>(board.getActionsForPosition(hidersPositionFromCurrentPlayersPov));
+        availableActions = removeImpossibleActions(availableActions);
+        if (hider.willUseBlackfareTicket(this))
+            // remove blackfare actions if exist
+            availableActions.addAll(getBlackfareActionsForHider());
         return availableActions;
+    }
+
+    private List<Action> getBlackfareActionsForHider() {
+        return board.generateBlackFareActionsForPosition(hidersPositionFromCurrentPlayersPov);
+    }
+
+    private List<Action> getAvailableActionsForSeeker(Seeker seeker) {
+        List<Action> availableActions = new ArrayList<>(board.getActionsForPosition(seeker.getBoardPosition()));
+        return removeImpossibleActions(availableActions);
+    }
+
+    private List<Action> removeImpossibleActions(List<Action> actions) {
+        // no tickets (blackfare too)
+        // occupied positions
+        return actions;
     }
 
     @Override
@@ -128,7 +151,7 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     private void selectNextPlayer() {
-        currentPlayerIndex = ++currentPlayerIndex % numberOfPlayers;
-        previousPlayerIndex = ++previousPlayerIndex % numberOfPlayers;
+        previousPlayerIndex = currentPlayerIndex;
+        currentPlayerIndex = ++currentPlayerIndex % players.length;
     }
 }

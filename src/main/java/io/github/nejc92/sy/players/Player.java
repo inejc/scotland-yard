@@ -46,17 +46,17 @@ public abstract class Player implements MctsDomainAgent<State> {
         boardPosition = newBoardPosition;
     }
 
-    protected int getTaxiTickets() {
-        return taxiTickets;
-    }
-
-    protected int getBusTickets() {
-        return busTickets;
-    }
-
-    protected int getUndergroundTickets() {
-        return undergroundTickets;
-    }
+//    protected int getTaxiTickets() {
+//        return taxiTickets;
+//    }
+//
+//    protected int getBusTickets() {
+//        return busTickets;
+//    }
+//
+//    protected int getUndergroundTickets() {
+//        return undergroundTickets;
+//    }
 
     protected void addTaxiTicket() {
         taxiTickets += 1;

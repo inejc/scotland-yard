@@ -12,11 +12,11 @@ public class Board {
     private final List<List<Action>> boardPositions;
 
     protected static Board initialize() {
-        List<List<Action>> boardPositions = getParsedPositions();
+        List<List<Action>> boardPositions = getParsedPositionsFromFile();
         return new Board(boardPositions);
     }
 
-    private static List<List<Action>> getParsedPositions() {
+    private static List<List<Action>> getParsedPositionsFromFile() {
         BoardFileParser parser = new BoardFileParser(BOARD_FILE_NAME);
         return parser.getParsedData();
     }
@@ -25,29 +25,38 @@ public class Board {
         this.boardPositions = boardPositions;
     }
 
-    protected List<Action> getPossibleActionsForPosition(int position) {
-        int positionListIndex = position - 1;
-        return boardPositions.get(positionListIndex);
-    }
-
     protected List<Integer> getDestinationsForPosition(int position) {
-        return getPossibleActionsForPosition(position).stream()
+        return getActionsForPosition(position).stream()
                 .map(Action::getDestination)
                 .collect(Collectors.toList());
     }
 
-    protected List<Action> getPossibleTransportationActionsForPosition(
-            Action.Transportation transportation, int position) {
-        int positionListIndex = position - 1;
+    protected List<Action> generateBlackFareActionsForPosition(int position) {
+        return getActionsForPosition(position).stream()
+                .map(Action::generateBlackFareAction)
+                .collect(Collectors.toList());
+    }
+
+    protected List<Action> getActionsForPosition(int position) {
+        int positionListIndex = getListIndexFromPosition(position);
+        return boardPositions.get(positionListIndex);
+    }
+
+    protected List<Integer> getTransportationDestinationsForPosition(
+            Action.Transportation transportation,int position) {
+        return getTransportationActionsForPosition(transportation, position).stream()
+                .map(Action::getDestination)
+                .collect(Collectors.toList());
+    }
+
+    protected List<Action> getTransportationActionsForPosition(Action.Transportation transportation, int position) {
+        int positionListIndex = getListIndexFromPosition(position);
         return boardPositions.get(positionListIndex).stream()
                 .filter(action -> action.getTransportation() == transportation)
                 .collect(Collectors.toList());
     }
 
-    protected List<Integer> getTransportationDestinationsForPosition(
-            Action.Transportation transportation, int position) {
-        return getPossibleTransportationActionsForPosition(transportation, position).stream()
-                .map(Action::getDestination)
-                .collect(Collectors.toList());
+    private int getListIndexFromPosition(int position) {
+        return position - 1;
     }
 }

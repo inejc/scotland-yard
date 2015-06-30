@@ -52,4 +52,8 @@ public abstract class Hider extends Player {
     public double getRewardFromTerminalState(State state) {
         return 0;
     }
+
+    public boolean willUseBlackfareTicket(State state) {
+        return false;
+    }
 }
