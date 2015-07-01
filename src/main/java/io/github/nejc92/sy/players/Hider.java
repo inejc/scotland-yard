@@ -1,6 +1,9 @@
 package io.github.nejc92.sy.players;
 
+import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
+
+import java.util.List;
 
 public abstract class Hider extends Player {
 
@@ -53,7 +56,7 @@ public abstract class Hider extends Player {
         return 0;
     }
 
-    public boolean shouldUseBlackfareTicket(State state) {
+    public boolean shouldUseBlackfareTicket(int currentRound, List<Action> actions) {
         return false;
     }
 }

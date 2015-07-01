@@ -1,11 +1,14 @@
 package io.github.nejc92.sy.game;
 
 import io.github.nejc92.mcts.MctsDomainState;
+import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class State implements MctsDomainState<Action, Player> {
 
@@ -64,10 +67,42 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public List<Action> getAvailableActionsForCurrentAgent() {
+        List<Action> availableActions;
         if (searchInvokingPlayerIsHider)
-            return playersState.getAvailableActionsForPlayerFromActualPosition(currentPlayerIndex);
+            availableActions = playersState.getAvailableActionsForPlayerFromActualPosition(currentPlayerIndex);
         else
-            return playersState.getAvailableActionsForPlayerFromSeekersPov(currentPlayerIndex);
+            availableActions = playersState.getAvailableActionsForPlayerFromSeekersPov(currentPlayerIndex);
+        availableActions = addBlackFareActionsIfHiderAndOptimal(availableActions);
+        return availableActions;
+    }
+
+    private List<Action> addBlackFareActionsIfHiderAndOptimal(List<Action> actions) {
+        if (playersState.playerIsHider(currentPlayerIndex)) {
+            Hider hider = (Hider)playersState.getPlayerAtIndex(currentPlayerIndex);
+            return addBlackFareActionsForHiderIfOptimal(hider, actions);
+        }
+        return actions;
+    }
+
+    List<Action> addBlackFareActionsForHiderIfOptimal(Hider hider, List<Action> actions) {
+        if (hider.shouldUseBlackfareTicket(currentRound, actions))
+            return addBlackFareActions(actions);
+        return actions;
+    }
+
+    private List<Action> addBlackFareActions(List<Action> actions) {
+        List<Action> blackFareActions = generateBlackfareActions(actions);
+        actions.addAll(blackFareActions);
+        return removeDuplicates(actions);
+    }
+
+    private List<Action> generateBlackfareActions(List<Action> actions) {
+        return actions.stream()
+                .map(Action::generateBlackFareAction).collect(Collectors.toList());
+    }
+
+    private List<Action> removeDuplicates(List<Action> actions) {
+        return new ArrayList<>(new LinkedHashSet<>(actions));
     }
 
     @Override

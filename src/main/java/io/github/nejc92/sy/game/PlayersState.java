@@ -85,7 +85,7 @@ public class PlayersState {
         availableActions = removeActionsWithOccupiedDestinations(availableActions);
         availableActions = removeActionsBecauseOfNoPlayersTickets(availableActions, playerIndex);
         if (playerIsHider(playerIndex))
-            availableActions = fixHidersBlackFareActions((Hider)players[playerIndex], availableActions);
+            availableActions = fixHidersBlackFareActions((Hider) players[playerIndex], availableActions);
         return availableActions;
     }
 
@@ -120,21 +120,8 @@ public class PlayersState {
 
     private List<Action> fixHidersBlackFareActions(Hider hider, List<Action> actions) {
         if (!hider.hasBlackFareTicket())
-            return removeAllBlackFareTickets(actions);
-        else
-            return appendBlackFareTicketsIfOptimalForHider(hider, actions);
-    }
-
-    private List<Action> removeAllBlackFareTickets(List<Action> actions) {
-        return actions.stream()
-                .filter(action -> !action.isTransportationAction(Action.Transportation.BLACK_FARE))
-                .collect(Collectors.toList());
-    }
-
-    private List<Action> appendBlackFareTicketsIfOptimalForHider(Hider hider, List<Action> actions) {
-        if (hider.shouldUseBlackfareTicket())
-        // remove duplicates
-        // list = new ArrayList<String>(new LinkedHashSet<String>(list))
+            actions = removeTransportationActions(Action.Transportation.BLACK_FARE, actions);
+        return actions;
     }
 
     protected void movePlayerWithAction(int playerIndex, Action action) {
