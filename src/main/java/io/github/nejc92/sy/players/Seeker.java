@@ -14,8 +14,8 @@ public abstract class Seeker extends Player {
 
     private final Color color;
 
-    public Seeker(Operator operator, int boardPosition, Color color) {
-        super(operator, Type.SEEKER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
+    public Seeker(Operator operator, Color color) {
+        super(operator, Type.SEEKER, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.color = color;
     }
 

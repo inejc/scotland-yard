@@ -1,4 +1,4 @@
-package io.github.nejc92.sy;
+package io.github.nejc92.sy.utilities;
 
 import io.github.nejc92.sy.game.Action;
 import org.junit.Test;

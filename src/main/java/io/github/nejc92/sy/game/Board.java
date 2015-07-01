@@ -1,6 +1,6 @@
 package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.BoardFileParser;
+import io.github.nejc92.sy.utilities.BoardFileParser;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,8 +42,8 @@ public class Board {
         return boardPositions.get(positionListIndex);
     }
 
-    protected List<Integer> getTransportationDestinationsForPosition(
-            Action.Transportation transportation,int position) {
+    protected List<Integer> getTransportationDestinationsForPosition (
+            Action.Transportation transportation, int position) {
         return getTransportationActionsForPosition(transportation, position).stream()
                 .map(Action::getDestination)
                 .collect(Collectors.toList());

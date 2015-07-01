@@ -16,47 +16,25 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     private final Operator operator;
     private final Type type;
-    private int boardPosition;
     private int taxiTickets;
     private int busTickets;
     private int undergroundTickets;
 
-    protected Player(Operator operator, Type type, int boardPosition, int taxiTickets, int busTickets, int undergroundTickets) {
+    protected Player(Operator operator, Type type, int taxiTickets, int busTickets, int undergroundTickets) {
         this.operator = operator;
         this.type = type;
-        this.boardPosition = boardPosition;
         this.taxiTickets = taxiTickets;
         this.busTickets = busTickets;
         this.undergroundTickets = undergroundTickets;
-    }
-
-    public boolean isHuman() {
-        return operator == Operator.HUMAN;
     }
 
     public boolean isHider() {
         return type == Type.HIDER;
     }
 
-    public int getBoardPosition() {
-        return boardPosition;
+    public boolean isHuman() {
+        return operator == Operator.HUMAN;
     }
-
-    public void moveToBoardPosition(int newBoardPosition) {
-        boardPosition = newBoardPosition;
-    }
-
-//    protected int getTaxiTickets() {
-//        return taxiTickets;
-//    }
-//
-//    protected int getBusTickets() {
-//        return busTickets;
-//    }
-//
-//    protected int getUndergroundTickets() {
-//        return undergroundTickets;
-//    }
 
     protected void addTaxiTicket() {
         taxiTickets += 1;

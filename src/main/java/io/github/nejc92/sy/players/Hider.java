@@ -12,7 +12,7 @@ public abstract class Hider extends Player {
     private int blackFareTickets;
 
     public Hider(Operator operator, int boardPosition) {
-        super(operator, Type.HIDER, boardPosition, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
+        super(operator, Type.HIDER, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.doubleMoveCards = 2;
         this.blackFareTickets = 5;
     }
