@@ -22,6 +22,10 @@ public class Action {
         return destination;
     }
 
+    public boolean isTransportationAction(Transportation transportation) {
+        return this.transportation == transportation;
+    }
+
     protected Action generateBlackFareAction() {
         return new Action(Transportation.BLACK_FARE, this.destination);
     }

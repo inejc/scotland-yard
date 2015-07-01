@@ -1,12 +1,13 @@
 package io.github.nejc92.sy.game;
 
+import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PlayersOnBoard {
+public class PlayersState {
 
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
             Arrays.asList(13, 26, 34, 50, 53, 62, 91, 94, 103, 112, 117, 132, 138, 141, 155, 174, 197, 198));
@@ -17,11 +18,11 @@ public class PlayersOnBoard {
     private List<Integer> hidersPossiblePositions;
     private int hidersMostProbablePosition;
 
-    protected static PlayersOnBoard initialize(Player[] players) {
+    protected static PlayersState initialize(Player[] players) {
         Board board = Board.initialize();
         int[] playersPositions = generateRandomPlayersPositions(players.length);
         List<Integer> hidersPossibleLocations = calculateInitialHidersPossibleLocations(playersPositions);
-        return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations);
+        return new PlayersState(board, players, playersPositions, hidersPossibleLocations);
     }
 
     private static int[] generateRandomPlayersPositions(int numberOfPlayers) {
@@ -41,8 +42,8 @@ public class PlayersOnBoard {
                 .skip(0).boxed().collect(Collectors.toList());
     }
 
-    private PlayersOnBoard(Board board, Player[] players, int[] playersPositions,
-                           List<Integer> hidersPossiblePositions) {
+    private PlayersState(Board board, Player[] players, int[] playersPositions,
+                         List<Integer> hidersPossiblePositions) {
         this.board = board;
         this.players = players;
         this.playersActualPositions = playersPositions;
@@ -69,16 +70,76 @@ public class PlayersOnBoard {
     }
 
     protected List<Action> getAvailableActionsForHiderFromSeekersPov(int playerIndex) {
-        // use most probable position
+        List<Action> possibleActions = board.getActionsForPosition(hidersMostProbablePosition);
+        return getAvailableActionsFromPossibleActionsForPlayer(possibleActions, playerIndex);
     }
 
     protected List<Action> getAvailableActionsForPlayerFromActualPosition(int playerIndex) {
-        // use actual positions
+        List<Action> possibleActions = board.getActionsForPosition(playersActualPositions[playerIndex]);
+        return getAvailableActionsFromPossibleActionsForPlayer(possibleActions, playerIndex);
+    }
+
+    private List<Action> getAvailableActionsFromPossibleActionsForPlayer(
+            List<Action> possibleActions, int playerIndex) {
+        List<Action> availableActions = new ArrayList<>(possibleActions);
+        availableActions = removeActionsWithOccupiedDestinations(availableActions);
+        availableActions = removeActionsBecauseOfNoPlayersTickets(availableActions, playerIndex);
+        if (playerIsHider(playerIndex))
+            availableActions = fixHidersBlackFareActions((Hider)players[playerIndex], availableActions);
+        return availableActions;
+    }
+
+    private List<Action> removeActionsWithOccupiedDestinations(List<Action> actions) {
+        return actions.stream()
+                .filter(this::actionsDestinationNotOccupied).collect(Collectors.toList());
+    }
+
+    private boolean actionsDestinationNotOccupied(Action action) {
+        int destinationPosition = action.getDestination();
+        return Arrays.stream(playersActualPositions)
+                .skip(0)
+                .allMatch(position -> position != destinationPosition);
+    }
+
+    private List<Action> removeActionsBecauseOfNoPlayersTickets(List<Action> actions, int playerIndex) {
+        Player player = players[playerIndex];
+        if (!player.hasTaxiTickets())
+            actions = removeTransportationActions(Action.Transportation.TAXI, actions);
+        if (!player.hasBusTickets())
+            actions = removeTransportationActions(Action.Transportation.BUS, actions);
+        if (!player.hasUndergroundTickets())
+            actions = removeTransportationActions(Action.Transportation.UNDERGROUND, actions);
+        return actions;
+    }
+
+    private List<Action> removeTransportationActions(Action.Transportation transportation, List<Action> actions) {
+        return actions.stream()
+                .filter(action -> !action.isTransportationAction(transportation))
+                .collect(Collectors.toList());
+    }
+
+    private List<Action> fixHidersBlackFareActions(Hider hider, List<Action> actions) {
+        if (!hider.hasBlackFareTicket())
+            return removeAllBlackFareTickets(actions);
+        else
+            return appendBlackFareTicketsIfOptimalForHider(hider, actions);
+    }
+
+    private List<Action> removeAllBlackFareTickets(List<Action> actions) {
+        return actions.stream()
+                .filter(action -> !action.isTransportationAction(Action.Transportation.BLACK_FARE))
+                .collect(Collectors.toList());
+    }
+
+    private List<Action> appendBlackFareTicketsIfOptimalForHider(Hider hider, List<Action> actions) {
+        if (hider.shouldUseBlackfareTicket())
+        // remove duplicates
+        // list = new ArrayList<String>(new LinkedHashSet<String>(list))
     }
 
     protected void movePlayerWithAction(int playerIndex, Action action) {
-
     }
+
 //
 //    private int getMostProbableHidersPosition() {
 //        return hidersPossiblePosition.get(0);
@@ -98,29 +159,5 @@ public class PlayersOnBoard {
 //            newHidersPossibleLocations.removeAll(getSeekersPositions(players));
 //        }
 //        hidersPossiblePosition = newHidersPossibleLocations;
-//    }
-//
-//    private List<Action> getAvailableActionsForHider(Hider hider) {
-//        List<Action> availableActions = new ArrayList<>(board.getActionsForPosition(hidersPositionFromCurrentPlayersPov));
-//        availableActions = removeImpossibleActions(availableActions);
-//        if (hider.willUseBlackfareTicket(this))
-//            // remove blackfare actions if exist
-//            availableActions.addAll(getBlackfareActionsForHider());
-//        return availableActions;
-//    }
-//
-//    private List<Action> getBlackfareActionsForHider() {
-//        return board.generateBlackFareActionsForPosition(hidersPositionFromCurrentPlayersPov);
-//    }
-//
-//    private List<Action> getAvailableActionsForSeeker(Seeker seeker) {
-//        List<Action> availableActions = new ArrayList<>(board.getActionsForPosition(seeker.getBoardPosition()));
-//        return removeImpossibleActions(availableActions);
-//    }
-//
-//    private List<Action> removeImpossibleActions(List<Action> actions) {
-//        // no tickets (blackfare too)
-//        // occupied positions
-//        return actions;
 //    }
 }

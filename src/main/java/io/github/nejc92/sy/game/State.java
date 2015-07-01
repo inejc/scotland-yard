@@ -13,7 +13,7 @@ public class State implements MctsDomainState<Action, Player> {
     private static final int NUMBER_OF_ROUNDS = 24;
     private static final List<Integer> HIDER_SURFACES_ROUNDS = new ArrayList<>(Arrays.asList(3, 8, 13, 18, 24));
 
-    private final PlayersOnBoard playersOnBoard;
+    private final PlayersState playersState;
     private int currentRound;
     private int currentPlayerIndex;
     private int previousPlayerIndex;
@@ -22,20 +22,20 @@ public class State implements MctsDomainState<Action, Player> {
 
     public static State initialize(Player[] players) {
         // todo: validate players
-        PlayersOnBoard playersOnBoard = PlayersOnBoard.initialize(players);
-        return new State(playersOnBoard);
+        PlayersState playersState = PlayersState.initialize(players);
+        return new State(playersState);
     }
 
-    private State(PlayersOnBoard playersOnBoard) {
-        this.playersOnBoard = playersOnBoard;
+    private State(PlayersState playersState) {
+        this.playersState = playersState;
         this.currentRound = 1;
         this.currentPlayerIndex = 0;
-        this.previousPlayerIndex = playersOnBoard.getNumberOfPlayers() - 1;
+        this.previousPlayerIndex = playersState.getNumberOfPlayers() - 1;
         this.inSimulation = false;
     }
 
     public void setCurrentPlayerAsSearchInvokingPlayer() {
-        searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
+        searchInvokingPlayerIsHider = playersState.playerIsHider(currentPlayerIndex);
     }
 
     public void setSimulationModeOn() {
@@ -49,12 +49,12 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public Player getCurrentAgent() {
-        return playersOnBoard.getPlayerAtIndex(currentPlayerIndex);
+        return playersState.getPlayerAtIndex(currentPlayerIndex);
     }
 
     @Override
     public Player getPreviousAgent() {
-        return playersOnBoard.getPlayerAtIndex(previousPlayerIndex);
+        return playersState.getPlayerAtIndex(previousPlayerIndex);
     }
 
     @Override
@@ -65,15 +65,15 @@ public class State implements MctsDomainState<Action, Player> {
     @Override
     public List<Action> getAvailableActionsForCurrentAgent() {
         if (searchInvokingPlayerIsHider)
-            return playersOnBoard.getAvailableActionsForPlayerFromActualPosition(currentPlayerIndex);
+            return playersState.getAvailableActionsForPlayerFromActualPosition(currentPlayerIndex);
         else
-            return playersOnBoard.getAvailableActionsForPlayerFromSeekersPov(currentPlayerIndex);
+            return playersState.getAvailableActionsForPlayerFromSeekersPov(currentPlayerIndex);
     }
 
     @Override
     public MctsDomainState performActionForCurrentAgent(Action action) {
         validateIsAvailableAction(action);
-        playersOnBoard.movePlayerWithAction(currentPlayerIndex, action);
+        playersState.movePlayerWithAction(currentPlayerIndex, action);
         // remove transportation card
         //getCurrentAgent().moveToBoardPosition(action.getDestination());
         //calculateNextRoundPlayersIndices();
@@ -95,6 +95,6 @@ public class State implements MctsDomainState<Action, Player> {
     private void prepareForNextRound() {
         currentRound++;
         previousPlayerIndex = currentPlayerIndex;
-        currentPlayerIndex = ++currentPlayerIndex % playersOnBoard.getNumberOfPlayers();
+        currentPlayerIndex = ++currentPlayerIndex % playersState.getNumberOfPlayers();
     }
 }

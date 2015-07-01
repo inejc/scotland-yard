@@ -53,7 +53,7 @@ public abstract class Hider extends Player {
         return 0;
     }
 
-    public boolean willUseBlackfareTicket(State state) {
+    public boolean shouldUseBlackfareTicket(State state) {
         return false;
     }
 }
