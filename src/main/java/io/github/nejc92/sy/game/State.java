@@ -19,6 +19,7 @@ public class State implements MctsDomainState<Action, Player> {
     private int currentRound;
     private int currentPlayerIndex;
     private int previousPlayerIndex;
+    private boolean inSearch;
     private boolean searchInvokingPlayerIsHider;
     private boolean inSimulation;
 
@@ -32,11 +33,17 @@ public class State implements MctsDomainState<Action, Player> {
         this.currentRound = 1;
         this.currentPlayerIndex = 0;
         this.previousPlayerIndex = playersOnBoard.getNumberOfPlayers() - 1;
+        this.inSearch = false;
         this.inSimulation = false;
     }
 
     public void setCurrentPlayerAsSearchInvokingPlayer() {
         searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
+        inSearch = true;
+    }
+
+    public void setSearchModeOff() {
+        inSearch = false;
     }
 
     public void setHidersMostProbablePosition(Action.Transportation transportation) {
@@ -61,10 +68,10 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     public boolean seekersWon() {
-//        if (searchInvokingPlayerIsHider)
-//            return playersOnBoard.seekerOnHidersActualPosition();
-//        else
-//            return playersOnBoard.seekerOnHidersMostProbablePosition();
+        if (inSearch && !searchInvokingPlayerIsHider)
+            return playersOnBoard.seekerOnHidersMostProbablePosition();
+        else
+            return playersOnBoard.seekerOnHidersActualPosition();
     }
 
     public boolean hiderWon() {

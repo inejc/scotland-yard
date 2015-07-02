@@ -20,6 +20,7 @@ public class ScotlandYard {
                 break;
             else {
                 mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
+                state.setSearchModeOff();
                 state.performActionForCurrentAgent(mostPromisingAction);
             }
             if (state.currentPlayerIsHider())

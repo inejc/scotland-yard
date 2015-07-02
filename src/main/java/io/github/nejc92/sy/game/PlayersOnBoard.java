@@ -85,6 +85,20 @@ public class PlayersOnBoard {
         return players[playerIndex];
     }
 
+    protected boolean seekerOnHidersMostProbablePosition() {
+        return seekerOnPosition(hidersMostProbablePosition);
+    }
+
+    protected boolean seekerOnHidersActualPosition() {
+        return seekerOnPosition(playersActualPositions[HIDERS_INDEX]);
+    }
+
+    protected boolean seekerOnPosition(int position) {
+        return Arrays.stream(playersActualPositions)
+                .skip(HIDERS_INDEX)
+                .anyMatch(hidersPosition -> hidersPosition == position);
+    }
+
     protected List<Action> getAvailableActionsFromSeekersPov(int playerIndex) {
         if (playerIsHider(playerIndex))
             return getAvailableActionsForHiderFromSeekersPov(playerIndex);
