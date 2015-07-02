@@ -37,18 +37,8 @@ public abstract class Hider extends Player {
     }
 
     @Override
-    public void addTaxiTicket() {
-        super.addTaxiTicket();
-    }
-
-    @Override
-    public void addBusTicket() {
-        super.addBusTicket();
-    }
-
-    @Override
-    public void addUndergroundTicket() {
-        super.addUndergroundTicket();
+    public void addTicket(Action.Transportation transportation) {
+        super.addTicket(transportation);
     }
 
     @Override

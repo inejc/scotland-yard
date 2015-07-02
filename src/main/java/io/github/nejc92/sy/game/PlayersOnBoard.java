@@ -9,6 +9,8 @@ import java.util.stream.IntStream;
 
 public class PlayersOnBoard {
 
+    private static final int NUMBER_OF_PLAYERS = 6;
+    private static final int HIDERS_INDEX = 0;
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
             Arrays.asList(13, 26, 34, 50, 53, 62, 91, 94, 103, 112, 117, 132, 138, 141, 155, 174, 197, 198));
 
@@ -19,10 +21,27 @@ public class PlayersOnBoard {
     private int hidersMostProbablePosition;
 
     protected static PlayersOnBoard initialize(Player[] players) {
+        validatePlayers(players);
         Board board = Board.initialize();
         int[] playersPositions = generateRandomPlayersPositions(players.length);
         List<Integer> hidersPossibleLocations = calculateInitialHidersPossibleLocations(playersPositions);
         return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations);
+    }
+
+    private static void validatePlayers(Player[] players) {
+        if (!numberOfPlayersValid(players))
+            throw new IllegalArgumentException("Error: invalid players passed as function parameter");
+        if (!playerTypesValid(players))
+            throw new IllegalArgumentException("Error: invalid players passed as function parameter");
+    }
+
+    private static boolean numberOfPlayersValid(Player[] players) {
+        return players.length == NUMBER_OF_PLAYERS;
+    }
+
+    private static boolean playerTypesValid(Player[] players) {
+        return players[HIDERS_INDEX].isHider()
+                && Arrays.stream(players).skip(HIDERS_INDEX).allMatch(Player::isSeeker);
     }
 
     private static int[] generateRandomPlayersPositions(int numberOfPlayers) {
@@ -39,7 +58,7 @@ public class PlayersOnBoard {
 
     private static List<Integer> getSeekersPositions(int[] playersPositions) {
         return Arrays.stream(playersPositions)
-                .skip(0).boxed().collect(Collectors.toList());
+                .skip(HIDERS_INDEX).boxed().collect(Collectors.toList());
     }
 
     private PlayersOnBoard(Board board, Player[] players, int[] playersPositions,
@@ -56,6 +75,10 @@ public class PlayersOnBoard {
 
     protected boolean playerIsHider(int playerIndex) {
         return getPlayerAtIndex(playerIndex).isHider();
+    }
+
+    protected boolean playerIsHuman(int playerIndex) {
+        return getPlayerAtIndex(playerIndex).isHuman();
     }
 
     protected Player getPlayerAtIndex(int playerIndex) {
@@ -97,7 +120,7 @@ public class PlayersOnBoard {
     private boolean actionsDestinationNotOccupied(Action action) {
         int destinationPosition = action.getDestination();
         return Arrays.stream(playersActualPositions)
-                .skip(0)
+                .skip(HIDERS_INDEX)
                 .allMatch(position -> position != destinationPosition);
     }
 
@@ -139,14 +162,16 @@ public class PlayersOnBoard {
 
     private void removeTransportationCard(int playerIndex, Action action) {
         players[playerIndex].removeTicket(action.getTransportation());
-        if (!playerIsHider(playerIndex))
-            players[0].addTicket(action.getTransportation());
+        if (!playerIsHider(playerIndex)) {
+            Hider hider = (Hider)getPlayerAtIndex(HIDERS_INDEX);
+            hider.addTicket(action.getTransportation());
+        }
     }
 
     protected void setHidersActualAsMostProbablePosition() {
         hidersPossiblePositions = new ArrayList<>();
-        hidersPossiblePositions.add(playersActualPositions[0]);
-        hidersMostProbablePosition = playersActualPositions[0];
+        hidersPossiblePositions.add(playersActualPositions[HIDERS_INDEX]);
+        hidersMostProbablePosition = playersActualPositions[HIDERS_INDEX];
     }
 
     protected void recalculateHidersMostProbablePosition(Action.Transportation transportation) {

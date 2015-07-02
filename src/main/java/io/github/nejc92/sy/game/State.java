@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 public class State implements MctsDomainState<Action, Player> {
 
-    private static final int NUMBER_OF_PLAYERS = 6;
     private static final int NUMBER_OF_ROUNDS = 24;
     private static final List<Integer> HIDER_SURFACES_ROUNDS = new ArrayList<>(Arrays.asList(3, 8, 13, 18, 24));
 
@@ -24,7 +23,6 @@ public class State implements MctsDomainState<Action, Player> {
     private boolean inSimulation;
 
     public static State initialize(Player[] players) {
-        // todo: validate players
         PlayersOnBoard playersOnBoard = PlayersOnBoard.initialize(players);
         return new State(playersOnBoard);
     }
@@ -66,9 +64,39 @@ public class State implements MctsDomainState<Action, Player> {
         return playersOnBoard.getPlayerAtIndex(currentPlayerIndex);
     }
 
+    public boolean currentPlayerIsHider() {
+        return playersOnBoard.playerIsHider(currentPlayerIndex);
+    }
+
+    public boolean currentPlayerIsHuman() {
+        return playersOnBoard.playerIsHuman(currentPlayerIndex);
+    }
+
     @Override
     public Player getPreviousAgent() {
         return playersOnBoard.getPlayerAtIndex(previousPlayerIndex);
+    }
+
+    @Override
+    public MctsDomainState performActionForCurrentAgent(Action action) {
+        validateIsAvailableAction(action);
+        if (searchInvokingPlayerIsHider)
+            playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
+        else
+            playersOnBoard.movePlayerFromSeekersPov(currentPlayerIndex, action);
+        prepareForNextRound();
+        // HUMAN? check hider double move, if yes: currentPlayerIndex--
+        return this;
+    }
+
+    private void validateIsAvailableAction(Action action) {
+        if (!isAvailableAction(action)) {
+            throw new IllegalArgumentException("Error: invalid action passed as function parameter");
+        }
+    }
+
+    private boolean isAvailableAction(Action action) {
+        return getAvailableActionsForCurrentAgent().contains(action);
     }
 
     @Override
@@ -84,6 +112,7 @@ public class State implements MctsDomainState<Action, Player> {
         else
             availableActions = playersOnBoard.getAvailableActionsFromSeekersPov(currentPlayerIndex);
         if (playersOnBoard.playerIsHider(currentPlayerIndex)) {
+            // HUMAN?
             availableActions = addBlackFareActionsForHiderIfOptimal(
                     (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);
         }
@@ -109,28 +138,6 @@ public class State implements MctsDomainState<Action, Player> {
 
     private List<Action> removeDuplicates(List<Action> actions) {
         return new ArrayList<>(new LinkedHashSet<>(actions));
-    }
-
-    @Override
-    public MctsDomainState performActionForCurrentAgent(Action action) {
-        validateIsAvailableAction(action);
-        if (searchInvokingPlayerIsHider)
-            playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
-        else
-            playersOnBoard.movePlayerFromSeekersPov(currentPlayerIndex, action);
-        prepareForNextRound();
-        // check hider double move, if yes: currentPlayerIndex--
-        return this;
-    }
-
-    private void validateIsAvailableAction(Action action) {
-        if (!isAvailableAction(action)) {
-            throw new IllegalArgumentException("Error: invalid action passed as function parameter");
-        }
-    }
-
-    private boolean isAvailableAction(Action action) {
-        return getAvailableActionsForCurrentAgent().contains(action);
     }
 
     private void prepareForNextRound() {

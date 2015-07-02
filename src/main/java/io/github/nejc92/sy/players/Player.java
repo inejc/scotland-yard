@@ -32,8 +32,24 @@ public abstract class Player implements MctsDomainAgent<State> {
         return type == Type.HIDER;
     }
 
+    public boolean isSeeker() {
+        return type == Type.SEEKER;
+    }
+
     public boolean isHuman() {
         return operator == Operator.HUMAN;
+    }
+
+    public boolean hasTaxiTickets() {
+        return taxiTickets > 0;
+    }
+
+    public boolean hasBusTickets() {
+        return busTickets > 0;
+    }
+
+    public boolean hasUndergroundTickets() {
+        return undergroundTickets > 0;
     }
 
     public void removeTicket(Action.Transportation transportation) {
@@ -49,7 +65,7 @@ public abstract class Player implements MctsDomainAgent<State> {
         }
     }
 
-    public void addTicket(Action.Transportation transportation) {
+    protected void addTicket(Action.Transportation transportation) {
         switch (transportation) {
             case TAXI:
                 taxiTickets++;
@@ -62,20 +78,9 @@ public abstract class Player implements MctsDomainAgent<State> {
         }
     }
 
-    public boolean hasTaxiTickets() {
-        return taxiTickets > 0;
-    }
-
-    public boolean hasBusTickets() {
-        return busTickets > 0;
-    }
-
-    public boolean hasUndergroundTickets() {
-        return undergroundTickets > 0;
-    }
-
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
+        state.setSimulationModeOn();
         while (!state.isTerminal()) {
             Action randomAction = getActionFromStatesAvailableActionsForSimulation(state);
             state.performActionForCurrentAgent(randomAction);
