@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class State implements MctsDomainState<Action, Player> {
 
-    private static final int NUMBER_OF_ROUNDS = 24;
+    private static final int MAX_NUMBER_OF_ROUNDS = 23;
     private static final List<Integer> HIDER_SURFACES_ROUNDS = new ArrayList<>(Arrays.asList(3, 8, 13, 18, 24));
 
     private final PlayersOnBoard playersOnBoard;
@@ -56,7 +56,19 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public boolean isTerminal() {
-        return false;
+        // hider caught or 22 round
+        return seekersWon() || hiderWon();
+    }
+
+    public boolean seekersWon() {
+//        if (searchInvokingPlayerIsHider)
+//            return playersOnBoard.seekerOnHidersActualPosition();
+//        else
+//            return playersOnBoard.seekerOnHidersMostProbablePosition();
+    }
+
+    public boolean hiderWon() {
+        return currentRound == MAX_NUMBER_OF_ROUNDS;
     }
 
     @Override
@@ -84,7 +96,7 @@ public class State implements MctsDomainState<Action, Player> {
             playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
         else
             playersOnBoard.movePlayerFromSeekersPov(currentPlayerIndex, action);
-        prepareForNextRound();
+        prepareForNextPlayer();
         // HUMAN? check hider double move, if yes: currentPlayerIndex--
         return this;
     }
@@ -140,8 +152,8 @@ public class State implements MctsDomainState<Action, Player> {
         return new ArrayList<>(new LinkedHashSet<>(actions));
     }
 
-    private void prepareForNextRound() {
-        currentRound++;
+    private void prepareForNextPlayer() {
+        // todo: fix currentRound++;
         previousPlayerIndex = currentPlayerIndex;
         currentPlayerIndex = ++currentPlayerIndex % playersOnBoard.getNumberOfPlayers();
     }
