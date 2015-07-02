@@ -31,12 +31,6 @@ public class Board {
                 .collect(Collectors.toList());
     }
 
-    protected List<Action> generateBlackFareActionsForPosition(int position) {
-        return getActionsForPosition(position).stream()
-                .map(Action::generateBlackFareAction)
-                .collect(Collectors.toList());
-    }
-
     protected List<Action> getActionsForPosition(int position) {
         int positionListIndex = getListIndexFromPosition(position);
         return boardPositions.get(positionListIndex);

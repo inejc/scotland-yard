@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PlayersState {
+public class PlayersOnBoard {
 
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
             Arrays.asList(13, 26, 34, 50, 53, 62, 91, 94, 103, 112, 117, 132, 138, 141, 155, 174, 197, 198));
@@ -18,11 +18,11 @@ public class PlayersState {
     private List<Integer> hidersPossiblePositions;
     private int hidersMostProbablePosition;
 
-    protected static PlayersState initialize(Player[] players) {
+    protected static PlayersOnBoard initialize(Player[] players) {
         Board board = Board.initialize();
         int[] playersPositions = generateRandomPlayersPositions(players.length);
         List<Integer> hidersPossibleLocations = calculateInitialHidersPossibleLocations(playersPositions);
-        return new PlayersState(board, players, playersPositions, hidersPossibleLocations);
+        return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations);
     }
 
     private static int[] generateRandomPlayersPositions(int numberOfPlayers) {
@@ -42,8 +42,8 @@ public class PlayersState {
                 .skip(0).boxed().collect(Collectors.toList());
     }
 
-    private PlayersState(Board board, Player[] players, int[] playersPositions,
-                         List<Integer> hidersPossiblePositions) {
+    private PlayersOnBoard(Board board, Player[] players, int[] playersPositions,
+                           List<Integer> hidersPossiblePositions) {
         this.board = board;
         this.players = players;
         this.playersActualPositions = playersPositions;
@@ -62,11 +62,11 @@ public class PlayersState {
         return players[playerIndex];
     }
 
-    protected List<Action> getAvailableActionsForPlayerFromSeekersPov(int playerIndex) {
+    protected List<Action> getAvailableActionsFromSeekersPov(int playerIndex) {
         if (playerIsHider(playerIndex))
             return getAvailableActionsForHiderFromSeekersPov(playerIndex);
         else
-            return getAvailableActionsForPlayerFromActualPosition(playerIndex);
+            return getAvailableActionsForActualPosition(playerIndex);
     }
 
     protected List<Action> getAvailableActionsForHiderFromSeekersPov(int playerIndex) {
@@ -74,7 +74,7 @@ public class PlayersState {
         return getAvailableActionsFromPossibleActionsForPlayer(possibleActions, playerIndex);
     }
 
-    protected List<Action> getAvailableActionsForPlayerFromActualPosition(int playerIndex) {
+    protected List<Action> getAvailableActionsForActualPosition(int playerIndex) {
         List<Action> possibleActions = board.getActionsForPosition(playersActualPositions[playerIndex]);
         return getAvailableActionsFromPossibleActionsForPlayer(possibleActions, playerIndex);
     }
@@ -112,39 +112,63 @@ public class PlayersState {
         return actions;
     }
 
-    private List<Action> removeTransportationActions(Action.Transportation transportation, List<Action> actions) {
-        return actions.stream()
-                .filter(action -> !action.isTransportationAction(transportation))
-                .collect(Collectors.toList());
-    }
-
     private List<Action> fixHidersBlackFareActions(Hider hider, List<Action> actions) {
         if (!hider.hasBlackFareTicket())
             actions = removeTransportationActions(Action.Transportation.BLACK_FARE, actions);
         return actions;
     }
 
-    protected void movePlayerWithAction(int playerIndex, Action action) {
+    private List<Action> removeTransportationActions(Action.Transportation transportation, List<Action> actions) {
+        return actions.stream()
+                .filter(action -> !action.isTransportationAction(transportation))
+                .collect(Collectors.toList());
     }
 
-//
-//    private int getMostProbableHidersPosition() {
-//        return hidersPossiblePosition.get(0);
-//    }
-//
-//    private void reCalculateHidersPossibleLocations(Action.Transportation transportation) {
-//        List<Integer> newHidersPossibleLocations = new ArrayList<>();
-//        if (HIDER_SURFACES_ROUNDS.contains(currentRound))
-//            newHidersPossibleLocations.add(getPreviousAgent().getBoardPosition());
-//        else{
-//            for (int position : hidersPossiblePosition) {
-//                if (transportation == Action.Transportation.BLACK_FARE)
-//                    newHidersPossibleLocations.addAll(board.getDestinationsForPosition(position));
-//                else
-//                    newHidersPossibleLocations.addAll(board.getTransportationDestinationsForPosition(transportation, position));
-//            }
-//            newHidersPossibleLocations.removeAll(getSeekersPositions(players));
-//        }
-//        hidersPossiblePosition = newHidersPossibleLocations;
-//    }
+    protected void movePlayerFromActualPosition(int playerIndex, Action action) {
+        removeTransportationCard(playerIndex, action);
+        playersActualPositions[playerIndex] = action.getDestination();
+    }
+
+    protected void movePlayerFromSeekersPov(int playerIndex, Action action) {
+        removeTransportationCard(playerIndex, action);
+        if (playerIsHider(playerIndex))
+            hidersMostProbablePosition = action.getDestination();
+        else
+            playersActualPositions[playerIndex] = action.getDestination();
+    }
+
+    private void removeTransportationCard(int playerIndex, Action action) {
+        players[playerIndex].removeTicket(action.getTransportation());
+        if (!playerIsHider(playerIndex))
+            players[0].addTicket(action.getTransportation());
+    }
+
+    protected void setHidersActualAsMostProbablePosition() {
+        hidersPossiblePositions = new ArrayList<>();
+        hidersPossiblePositions.add(playersActualPositions[0]);
+        hidersMostProbablePosition = playersActualPositions[0];
+    }
+
+    protected void recalculateHidersMostProbablePosition(Action.Transportation transportation) {
+        hidersPossiblePositions = recalculateHidersPossiblePositions(transportation);
+        hidersMostProbablePosition = getMostProbableHidersPosition();
+    }
+
+    private List<Integer> recalculateHidersPossiblePositions(Action.Transportation transportation) {
+        List<Integer> newHidersPossiblePositions = new ArrayList<>();
+        for (int position : hidersPossiblePositions) {
+            if (transportation == Action.Transportation.BLACK_FARE)
+                newHidersPossiblePositions.addAll(board.getDestinationsForPosition(position));
+            else {
+                newHidersPossiblePositions.addAll(
+                        board.getTransportationDestinationsForPosition(transportation, position));
+            }
+        }
+        newHidersPossiblePositions.removeAll(getSeekersPositions(playersActualPositions));
+        return newHidersPossiblePositions;
+    }
+
+    private int getMostProbableHidersPosition() {
+        return hidersPossiblePositions.get(0);
+    }
 }

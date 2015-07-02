@@ -16,7 +16,7 @@ public class State implements MctsDomainState<Action, Player> {
     private static final int NUMBER_OF_ROUNDS = 24;
     private static final List<Integer> HIDER_SURFACES_ROUNDS = new ArrayList<>(Arrays.asList(3, 8, 13, 18, 24));
 
-    private final PlayersState playersState;
+    private final PlayersOnBoard playersOnBoard;
     private int currentRound;
     private int currentPlayerIndex;
     private int previousPlayerIndex;
@@ -25,20 +25,31 @@ public class State implements MctsDomainState<Action, Player> {
 
     public static State initialize(Player[] players) {
         // todo: validate players
-        PlayersState playersState = PlayersState.initialize(players);
-        return new State(playersState);
+        PlayersOnBoard playersOnBoard = PlayersOnBoard.initialize(players);
+        return new State(playersOnBoard);
     }
 
-    private State(PlayersState playersState) {
-        this.playersState = playersState;
+    private State(PlayersOnBoard playersOnBoard) {
+        this.playersOnBoard = playersOnBoard;
         this.currentRound = 1;
         this.currentPlayerIndex = 0;
-        this.previousPlayerIndex = playersState.getNumberOfPlayers() - 1;
+        this.previousPlayerIndex = playersOnBoard.getNumberOfPlayers() - 1;
         this.inSimulation = false;
     }
 
     public void setCurrentPlayerAsSearchInvokingPlayer() {
-        searchInvokingPlayerIsHider = playersState.playerIsHider(currentPlayerIndex);
+        searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
+    }
+
+    public void setHidersMostProbablePosition(Action.Transportation transportation) {
+        if (isHiderSurfacesRound())
+            playersOnBoard.setHidersActualAsMostProbablePosition();
+        else
+            playersOnBoard.recalculateHidersMostProbablePosition(transportation);
+    }
+
+    private boolean isHiderSurfacesRound() {
+        return HIDER_SURFACES_ROUNDS.contains(currentRound);
     }
 
     public void setSimulationModeOn() {
@@ -52,12 +63,12 @@ public class State implements MctsDomainState<Action, Player> {
 
     @Override
     public Player getCurrentAgent() {
-        return playersState.getPlayerAtIndex(currentPlayerIndex);
+        return playersOnBoard.getPlayerAtIndex(currentPlayerIndex);
     }
 
     @Override
     public Player getPreviousAgent() {
-        return playersState.getPlayerAtIndex(previousPlayerIndex);
+        return playersOnBoard.getPlayerAtIndex(previousPlayerIndex);
     }
 
     @Override
@@ -69,19 +80,14 @@ public class State implements MctsDomainState<Action, Player> {
     public List<Action> getAvailableActionsForCurrentAgent() {
         List<Action> availableActions;
         if (searchInvokingPlayerIsHider)
-            availableActions = playersState.getAvailableActionsForPlayerFromActualPosition(currentPlayerIndex);
+            availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
         else
-            availableActions = playersState.getAvailableActionsForPlayerFromSeekersPov(currentPlayerIndex);
-        availableActions = addBlackFareActionsIfHiderAndOptimal(availableActions);
-        return availableActions;
-    }
-
-    private List<Action> addBlackFareActionsIfHiderAndOptimal(List<Action> actions) {
-        if (playersState.playerIsHider(currentPlayerIndex)) {
-            Hider hider = (Hider)playersState.getPlayerAtIndex(currentPlayerIndex);
-            return addBlackFareActionsForHiderIfOptimal(hider, actions);
+            availableActions = playersOnBoard.getAvailableActionsFromSeekersPov(currentPlayerIndex);
+        if (playersOnBoard.playerIsHider(currentPlayerIndex)) {
+            availableActions = addBlackFareActionsForHiderIfOptimal(
+                    (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);
         }
-        return actions;
+        return availableActions;
     }
 
     List<Action> addBlackFareActionsForHiderIfOptimal(Hider hider, List<Action> actions) {
@@ -108,12 +114,12 @@ public class State implements MctsDomainState<Action, Player> {
     @Override
     public MctsDomainState performActionForCurrentAgent(Action action) {
         validateIsAvailableAction(action);
-        playersState.movePlayerWithAction(currentPlayerIndex, action);
-        // remove transportation card
-        //getCurrentAgent().moveToBoardPosition(action.getDestination());
-        //calculateNextRoundPlayersIndices();
+        if (searchInvokingPlayerIsHider)
+            playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
+        else
+            playersOnBoard.movePlayerFromSeekersPov(currentPlayerIndex, action);
+        prepareForNextRound();
         // check hider double move, if yes: currentPlayerIndex--
-        // if not - recalculate hiders possible positions
         return this;
     }
 
@@ -130,6 +136,6 @@ public class State implements MctsDomainState<Action, Player> {
     private void prepareForNextRound() {
         currentRound++;
         previousPlayerIndex = currentPlayerIndex;
-        currentPlayerIndex = ++currentPlayerIndex % playersState.getNumberOfPlayers();
+        currentPlayerIndex = ++currentPlayerIndex % playersOnBoard.getNumberOfPlayers();
     }
 }

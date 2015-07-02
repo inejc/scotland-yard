@@ -36,28 +36,30 @@ public abstract class Player implements MctsDomainAgent<State> {
         return operator == Operator.HUMAN;
     }
 
-    protected void addTaxiTicket() {
-        taxiTickets += 1;
+    public void removeTicket(Action.Transportation transportation) {
+        switch (transportation) {
+            case TAXI:
+                taxiTickets--;
+                break;
+            case BUS:
+                busTickets--;
+                break;
+            case UNDERGROUND:
+                undergroundTickets--;
+        }
     }
 
-    protected void addBusTicket() {
-        busTickets += 1;
-    }
-
-    protected void addUndergroundTicket() {
-        undergroundTickets += 1;
-    }
-
-    public void removeTaxiTicket() {
-        taxiTickets -= 1;
-    }
-
-    public void removeBusTicket() {
-        busTickets -= 1;
-    }
-
-    public void removeUndergroundTicket() {
-        undergroundTickets -= 1;
+    public void addTicket(Action.Transportation transportation) {
+        switch (transportation) {
+            case TAXI:
+                taxiTickets++;
+                break;
+            case BUS:
+                busTickets++;
+                break;
+            case UNDERGROUND:
+                undergroundTickets++;
+        }
     }
 
     public boolean hasTaxiTickets() {
