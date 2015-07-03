@@ -46,7 +46,7 @@ public class State implements MctsDomainState<Action, Player> {
         inSearch = false;
     }
 
-    public void setHidersMostProbablePosition(Action.Transportation transportation) {
+    public void setHidersMostProbablePosition(Connection.Transportation transportation) {
         if (isHiderSurfacesRound())
             playersOnBoard.setHidersActualAsMostProbablePosition();
         else

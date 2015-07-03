@@ -1,6 +1,7 @@
 package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.utilities.BoardFileParser;
+import io.github.nejc92.sy.utilities.BoardGraphGenerator;
+import org.jgrapht.UndirectedGraph;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,48 +10,40 @@ public class Board {
 
     private static final String BOARD_FILE_NAME = "src/java/resources/board_file.xml";
 
-    private final List<List<Action>> boardPositions;
+    private final UndirectedGraph<Integer, Connection> graph;
 
     protected static Board initialize() {
-        List<List<Action>> boardPositions = getParsedPositionsFromFile();
-        return new Board(boardPositions);
+        BoardGraphGenerator boardGraphGenerator = new BoardGraphGenerator(BOARD_FILE_NAME);
+        UndirectedGraph<Integer, Connection> graph = boardGraphGenerator.generateGraph();
+        return new Board(graph);
     }
 
-    private static List<List<Action>> getParsedPositionsFromFile() {
-        BoardFileParser parser = new BoardFileParser(BOARD_FILE_NAME);
-        return parser.getParsedData();
-    }
-
-    private Board(List<List<Action>> boardPositions) {
-        this.boardPositions = boardPositions;
+    private Board(UndirectedGraph<Integer, Connection> graph) {
+        this.graph = graph;
     }
 
     protected List<Integer> getDestinationsForPosition(int position) {
-        return getActionsForPosition(position).stream()
-                .map(Action::getDestination)
-                .collect(Collectors.toList());
+       return graph.edgesOf(position).stream()
+               .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
     protected List<Action> getActionsForPosition(int position) {
-        int positionListIndex = getListIndexFromPosition(position);
-        return boardPositions.get(positionListIndex);
+        return graph.edgesOf(position).stream()
+                .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))
+                .collect(Collectors.toList());
     }
 
     protected List<Integer> getTransportationDestinationsForPosition (
-            Action.Transportation transportation, int position) {
-        return getTransportationActionsForPosition(transportation, position).stream()
-                .map(Action::getDestination)
-                .collect(Collectors.toList());
+            Connection.Transportation transportation, int position) {
+        return graph.edgesOf(position).stream()
+                .filter(connection -> connection.isTransportation(transportation))
+                .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
-    protected List<Action> getTransportationActionsForPosition(Action.Transportation transportation, int position) {
-        int positionListIndex = getListIndexFromPosition(position);
-        return boardPositions.get(positionListIndex).stream()
-                .filter(action -> action.getTransportation() == transportation)
+    protected List<Action> getTransportationActionsForPosition(Connection.Transportation transportation, int position) {
+        return graph.edgesOf(position).stream()
+                .filter(connection -> connection.isTransportation(transportation))
+                .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))
                 .collect(Collectors.toList());
-    }
-
-    private int getListIndexFromPosition(int position) {
-        return position - 1;
     }
 }

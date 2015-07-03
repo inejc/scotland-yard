@@ -1,6 +1,7 @@
 package io.github.nejc92.sy.players;
 
 import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.game.Connection;
 import io.github.nejc92.sy.game.State;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public abstract class Hider extends Player {
     }
 
     @Override
-    public void addTicket(Action.Transportation transportation) {
+    public void addTicket(Connection.Transportation transportation) {
         super.addTicket(transportation);
     }
 

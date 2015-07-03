@@ -2,6 +2,7 @@ package io.github.nejc92.sy.players;
 
 import io.github.nejc92.mcts.MctsDomainAgent;
 import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.game.Connection;
 import io.github.nejc92.sy.game.State;
 
 public abstract class Player implements MctsDomainAgent<State> {
@@ -52,7 +53,7 @@ public abstract class Player implements MctsDomainAgent<State> {
         return undergroundTickets > 0;
     }
 
-    public void removeTicket(Action.Transportation transportation) {
+    public void removeTicket(Connection.Transportation transportation) {
         switch (transportation) {
             case TAXI:
                 taxiTickets--;
@@ -65,7 +66,7 @@ public abstract class Player implements MctsDomainAgent<State> {
         }
     }
 
-    protected void addTicket(Action.Transportation transportation) {
+    protected void addTicket(Connection.Transportation transportation) {
         switch (transportation) {
             case TAXI:
                 taxiTickets++;

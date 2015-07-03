@@ -141,21 +141,21 @@ public class PlayersOnBoard {
     private List<Action> removeActionsBecauseOfNoPlayersTickets(List<Action> actions, int playerIndex) {
         Player player = players[playerIndex];
         if (!player.hasTaxiTickets())
-            actions = removeTransportationActions(Action.Transportation.TAXI, actions);
+            actions = removeTransportationActions(Connection.Transportation.TAXI, actions);
         if (!player.hasBusTickets())
-            actions = removeTransportationActions(Action.Transportation.BUS, actions);
+            actions = removeTransportationActions(Connection.Transportation.BUS, actions);
         if (!player.hasUndergroundTickets())
-            actions = removeTransportationActions(Action.Transportation.UNDERGROUND, actions);
+            actions = removeTransportationActions(Connection.Transportation.UNDERGROUND, actions);
         return actions;
     }
 
     private List<Action> fixHidersBlackFareActions(Hider hider, List<Action> actions) {
         if (!hider.hasBlackFareTicket())
-            actions = removeTransportationActions(Action.Transportation.BLACK_FARE, actions);
+            actions = removeTransportationActions(Connection.Transportation.BLACK_FARE, actions);
         return actions;
     }
 
-    private List<Action> removeTransportationActions(Action.Transportation transportation, List<Action> actions) {
+    private List<Action> removeTransportationActions(Connection.Transportation transportation, List<Action> actions) {
         return actions.stream()
                 .filter(action -> !action.isTransportationAction(transportation))
                 .collect(Collectors.toList());
@@ -188,15 +188,15 @@ public class PlayersOnBoard {
         hidersMostProbablePosition = playersActualPositions[HIDERS_INDEX];
     }
 
-    protected void recalculateHidersMostProbablePosition(Action.Transportation transportation) {
+    protected void recalculateHidersMostProbablePosition(Connection.Transportation transportation) {
         hidersPossiblePositions = recalculateHidersPossiblePositions(transportation);
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
-    private List<Integer> recalculateHidersPossiblePositions(Action.Transportation transportation) {
+    private List<Integer> recalculateHidersPossiblePositions(Connection.Transportation transportation) {
         List<Integer> newHidersPossiblePositions = new ArrayList<>();
         for (int position : hidersPossiblePositions) {
-            if (transportation == Action.Transportation.BLACK_FARE)
+            if (transportation == Connection.Transportation.BLACK_FARE)
                 newHidersPossiblePositions.addAll(board.getDestinationsForPosition(position));
             else {
                 newHidersPossiblePositions.addAll(
