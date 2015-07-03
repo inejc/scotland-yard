@@ -1,7 +1,7 @@
 package io.github.nejc92.sy.players;
 
 import io.github.nejc92.sy.game.Action;
-import io.github.nejc92.sy.game.Connection;
+import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.game.State;
 
 import java.util.List;

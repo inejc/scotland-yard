@@ -1,7 +1,7 @@
 package io.github.nejc92.sy.utilities;
 
 import io.github.nejc92.sy.game.Action;
-import io.github.nejc92.sy.game.Connection;
+import io.github.nejc92.sy.game.board.Connection;
 import org.junit.Test;
 
 import java.util.List;

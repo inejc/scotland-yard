@@ -1,5 +1,6 @@
-package io.github.nejc92.sy.game;
+package io.github.nejc92.sy.game.board;
 
+import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.utilities.BoardGraphGenerator;
 import org.jgrapht.UndirectedGraph;
 
@@ -12,7 +13,7 @@ public class Board {
 
     private final UndirectedGraph<Integer, Connection> graph;
 
-    protected static Board initialize() {
+    public static Board initialize() {
         BoardGraphGenerator boardGraphGenerator = new BoardGraphGenerator(BOARD_FILE_NAME);
         UndirectedGraph<Integer, Connection> graph = boardGraphGenerator.generateGraph();
         return new Board(graph);
@@ -22,25 +23,25 @@ public class Board {
         this.graph = graph;
     }
 
-    protected List<Integer> getDestinationsForPosition(int position) {
+    public List<Integer> getDestinationsForPosition(int position) {
        return graph.edgesOf(position).stream()
                .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
-    protected List<Action> getActionsForPosition(int position) {
+    public List<Action> getActionsForPosition(int position) {
         return graph.edgesOf(position).stream()
                 .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))
                 .collect(Collectors.toList());
     }
 
-    protected List<Integer> getTransportationDestinationsForPosition (
+    public List<Integer> getTransportationDestinationsForPosition (
             Connection.Transportation transportation, int position) {
         return graph.edgesOf(position).stream()
                 .filter(connection -> connection.isTransportation(transportation))
                 .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
-    protected List<Action> getTransportationActionsForPosition(Connection.Transportation transportation, int position) {
+    public List<Action> getTransportationActionsForPosition(Connection.Transportation transportation, int position) {
         return graph.edgesOf(position).stream()
                 .filter(connection -> connection.isTransportation(transportation))
                 .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))

@@ -1,6 +1,7 @@
 package io.github.nejc92.sy.game;
 
 import io.github.nejc92.mcts.MctsDomainState;
+import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 

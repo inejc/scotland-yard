@@ -1,5 +1,7 @@
 package io.github.nejc92.sy.game;
 
+import io.github.nejc92.sy.game.board.Board;
+import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 

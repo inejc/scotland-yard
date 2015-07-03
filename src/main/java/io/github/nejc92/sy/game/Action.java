@@ -1,5 +1,7 @@
 package io.github.nejc92.sy.game;
 
+import io.github.nejc92.sy.game.board.Connection;
+
 public class Action {
 
     private final Connection.Transportation transportation;
