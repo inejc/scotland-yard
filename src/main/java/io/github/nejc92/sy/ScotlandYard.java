@@ -5,6 +5,9 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.board.Board;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.players.Player;
+import io.github.nejc92.sy.players.RandomHider;
+import io.github.nejc92.sy.players.RandomSeeker;
+import io.github.nejc92.sy.players.Seeker;
 
 public class ScotlandYard {
 
@@ -22,6 +25,13 @@ public class ScotlandYard {
     }
 
     private static Player[] initializePlayers() {
-        return null;
+        Player[] players = new Player[6];
+        players[0] = new RandomHider(Player.Operator.COMPUTER);
+        players[1] = new RandomSeeker(Player.Operator.COMPUTER, Seeker.Color.BLACK);
+        players[2] = new RandomSeeker(Player.Operator.COMPUTER, Seeker.Color.BLUE);
+        players[3] = new RandomSeeker(Player.Operator.COMPUTER, Seeker.Color.YELLOW);
+        players[4] = new RandomSeeker(Player.Operator.COMPUTER, Seeker.Color.RED);
+        players[5] = new RandomSeeker(Player.Operator.COMPUTER, Seeker.Color.GREEN);
+        return players;
     }
 }

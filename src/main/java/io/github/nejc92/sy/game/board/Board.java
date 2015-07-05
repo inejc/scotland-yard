@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class Board {
 
-    private static final String BOARD_FILE_NAME = "src/java/resources/board_file.xml";
+    private static final String BOARD_FILE_NAME = "src/main/resources/board_file.xml";
 
     private final UndirectedGraph<Integer, Connection> graph;
     private final UndirectedGraph<Integer, Connection> seekersSubGraph;

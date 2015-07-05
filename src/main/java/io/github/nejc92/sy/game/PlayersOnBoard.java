@@ -13,6 +13,7 @@ public class PlayersOnBoard {
 
     private static final int NUMBER_OF_PLAYERS = 6;
     private static final int HIDERS_INDEX = 0;
+    private static final int SKIP_HIDER = 1;
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
             Arrays.asList(13, 26, 34, 50, 53, 62, 91, 94, 103, 112, 117, 132, 138, 141, 155, 174, 197, 198));
 
@@ -43,7 +44,7 @@ public class PlayersOnBoard {
 
     private static boolean playerTypesValid(Player[] players) {
         return players[HIDERS_INDEX].isHider()
-                && Arrays.stream(players).skip(HIDERS_INDEX).allMatch(Player::isSeeker);
+                && Arrays.stream(players).skip(SKIP_HIDER).allMatch(Player::isSeeker);
     }
 
     private static int[] generateRandomPlayersPositions(int numberOfPlayers) {
@@ -60,7 +61,7 @@ public class PlayersOnBoard {
 
     private static List<Integer> getSeekersPositions(int[] playersPositions) {
         return Arrays.stream(playersPositions)
-                .skip(HIDERS_INDEX).boxed().collect(Collectors.toList());
+                .skip(SKIP_HIDER).boxed().collect(Collectors.toList());
     }
 
     private PlayersOnBoard(Board board, Player[] players, int[] playersPositions,
@@ -97,7 +98,7 @@ public class PlayersOnBoard {
 
     protected boolean seekerOnPosition(int position) {
         return Arrays.stream(playersActualPositions)
-                .skip(HIDERS_INDEX)
+                .skip(SKIP_HIDER)
                 .anyMatch(hidersPosition -> hidersPosition == position);
     }
 
@@ -136,7 +137,7 @@ public class PlayersOnBoard {
     private boolean actionsDestinationNotOccupied(Action action) {
         int destinationPosition = action.getDestination();
         return Arrays.stream(playersActualPositions)
-                .skip(HIDERS_INDEX)
+                .skip(SKIP_HIDER)
                 .allMatch(position -> position != destinationPosition);
     }
 
@@ -240,9 +241,16 @@ public class PlayersOnBoard {
                     probabilities[i] = 0.196;
             }
         }
-        // for every possible location distance to every seeker
-        // choose min distance
-        // put in category based on min distance
-        // choose location
+        // todo: fix whole method
+        boolean notAccepted = true;
+        int chosen = 0;
+        double max_weight = Arrays.stream(probabilities).max().getAsDouble();
+        while (notAccepted){
+            chosen = (int)(probabilities.length * Math.random());
+            if(Math.random() < probabilities[chosen] / max_weight) {
+                notAccepted = false;
+            }
+        }
+        return hidersPossiblePositions.get(chosen);
     }
 }

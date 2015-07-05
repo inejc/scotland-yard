@@ -104,6 +104,10 @@ public class State implements MctsDomainState<Action, Player> {
             lastHidersTransportation = action.getTransportation();
         prepareForNextPlayer();
         // HUMAN? check hider double move, if yes: currentPlayerIndex--
+        // if (!inSimulation && currentPlayerIsHuman() && currentPlayerIsHider())
+            // ask
+        // else if (currentPlayerIsHuman() && currentPlayerIsHider() && playersOnBoard.c)
+            // check
         return this;
     }
 

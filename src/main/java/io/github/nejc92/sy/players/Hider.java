@@ -15,7 +15,7 @@ public abstract class Hider extends Player {
     private int doubleMoveCards;
     private int blackFareTickets;
 
-    public Hider(Operator operator, int boardPosition) {
+    public Hider(Operator operator) {
         super(operator, Type.HIDER, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS);
         this.doubleMoveCards = 2;
         this.blackFareTickets = 5;
@@ -48,6 +48,10 @@ public abstract class Hider extends Player {
     }
 
     public boolean shouldUseBlackfareTicket(int currentRound, List<Action> actions) {
+        return false;
+    }
+
+    public boolean shouldUseDoubleMove() {
         return false;
     }
 }
