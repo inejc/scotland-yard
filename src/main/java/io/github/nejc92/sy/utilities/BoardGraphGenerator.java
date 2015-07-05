@@ -1,5 +1,6 @@
 package io.github.nejc92.sy.utilities;
 
+import com.rits.cloning.Cloner;
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.board.Connection;
 import org.jgrapht.UndirectedGraph;
@@ -44,5 +45,14 @@ public class BoardGraphGenerator {
         actions.stream()
                 .forEach(action -> graph.addEdge(position, action.getDestination(),
                         new Connection(position, action.getDestination(), action.getTransportation())));
+    }
+
+    public UndirectedGraph<Integer, Connection> generateSeekersGraph(UndirectedGraph<Integer, Connection> graph) {
+        Cloner cloner = new Cloner();
+        UndirectedGraph<Integer, Connection> newGraph = cloner.deepClone(graph);
+        graph.edgeSet().stream()
+                .filter(connection -> connection.isTransportation(Connection.Transportation.BLACK_FARE))
+                .forEach(newGraph::removeEdge);
+        return newGraph;
     }
 }

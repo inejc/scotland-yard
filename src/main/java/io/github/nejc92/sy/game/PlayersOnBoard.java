@@ -195,6 +195,11 @@ public class PlayersOnBoard {
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
+    protected void removeCurrentSeekersPositionFromPossibleHidersPositions(int playerIndex) {
+        hidersPossiblePositions.remove(playersActualPositions[playerIndex]);
+        hidersMostProbablePosition = getMostProbableHidersPosition();
+    }
+
     private List<Integer> recalculateHidersPossiblePositions(Connection.Transportation transportation) {
         List<Integer> newHidersPossiblePositions = new ArrayList<>();
         for (int position : hidersPossiblePositions) {
@@ -206,10 +211,38 @@ public class PlayersOnBoard {
             }
         }
         newHidersPossiblePositions.removeAll(getSeekersPositions(playersActualPositions));
+        // remove duplicates?
         return newHidersPossiblePositions;
     }
 
     private int getMostProbableHidersPosition() {
-        return hidersPossiblePositions.get(0);
+        List<Integer> seekersPositions = getSeekersPositions(playersActualPositions);
+        double[] probabilities = new double[hidersPossiblePositions.size()];
+        for (int i = 0; i < hidersPossiblePositions.size(); i++) {
+            int position = hidersPossiblePositions.get(i);
+            int minDistance = seekersPositions.stream().min(((position1, position2) -> Integer.compare(
+                    board.shortestDistanceBetween(position1, position),
+                    board.shortestDistanceBetween(position2, position)))).get();
+            switch (minDistance) {
+                case 1:
+                    probabilities[i] = 0.196;
+                    break;
+                case 2:
+                    probabilities[i] = 0.671;
+                    break;
+                case 3:
+                    probabilities[i] = 0.540;
+                    break;
+                case 4:
+                    probabilities[i] = 0.384;
+                    break;
+                default:
+                    probabilities[i] = 0.196;
+            }
+        }
+        // for every possible location distance to every seeker
+        // choose min distance
+        // put in category based on min distance
+        // choose location
     }
 }

@@ -14,15 +14,10 @@ public class ScotlandYard {
         Player[] players = initializePlayers();
         State state = State.initialize(players);
         while (!state.isTerminal()) {
-            state.setCurrentPlayerAsSearchInvokingPlayer();
-            Action mostPromisingAction;
-            if (state.currentPlayerIsHuman())
-                break;
-            else {
-                mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
-                state.setSearchModeOff();
-                state.performActionForCurrentAgent(mostPromisingAction);
-            }
+            state.setSearchModeOn();
+            Action mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
+            state.setSearchModeOff();
+            state.performActionForCurrentAgent(mostPromisingAction);
         }
     }
 

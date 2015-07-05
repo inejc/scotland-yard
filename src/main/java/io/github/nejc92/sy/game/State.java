@@ -42,9 +42,9 @@ public class State implements MctsDomainState<Action, Player> {
         this.inSimulation = false;
     }
 
-    public void setCurrentPlayerAsSearchInvokingPlayer() {
-        searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
+    public void setSearchModeOn() {
         inSearch = true;
+        searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
     }
 
     public void setSearchModeOff() {
@@ -159,7 +159,7 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     private void prepareForNextPlayer() {
-        if (shouldSetHidersMostProbablePosition())
+        if (!inSearch)
             setHidersMostProbablePosition(lastHidersTransportation);
         if (isLastPlayerOfRound())
             currentRound++;
@@ -167,18 +167,19 @@ public class State implements MctsDomainState<Action, Player> {
         currentPlayerIndex = ++currentPlayerIndex % playersOnBoard.getNumberOfPlayers();
     }
 
-    private boolean shouldSetHidersMostProbablePosition() {
-        return currentPlayerIndex == 0 && (!inSearch || !searchInvokingPlayerIsHider);
-    }
-
     private boolean isLastPlayerOfRound() {
         return currentPlayerIndex == numberOfPlayers - 1;
     }
 
     private void setHidersMostProbablePosition(Connection.Transportation transportation) {
-        if (isHiderSurfacesRound())
-            playersOnBoard.setHidersActualAsMostProbablePosition();
-        else
-            playersOnBoard.recalculateHidersMostProbablePosition(transportation);
+        if (currentPlayerIsHider()) {
+            if (isHiderSurfacesRound())
+                playersOnBoard.setHidersActualAsMostProbablePosition();
+            else
+                playersOnBoard.recalculateHidersMostProbablePosition(transportation);
+        }
+        else {
+            playersOnBoard.removeCurrentSeekersPositionFromPossibleHidersPositions(currentPlayerIndex);
+        }
     }
 }
