@@ -23,8 +23,6 @@ public class ScotlandYard {
                 state.setSearchModeOff();
                 state.performActionForCurrentAgent(mostPromisingAction);
             }
-            if (state.currentPlayerIsHider())
-                state.setHidersMostProbablePosition(mostPromisingAction.getTransportation());
         }
     }
 
