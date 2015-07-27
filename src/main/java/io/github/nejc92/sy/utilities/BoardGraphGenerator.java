@@ -4,7 +4,7 @@ import com.rits.cloning.Cloner;
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.board.Connection;
 import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.Multigraph;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -19,7 +19,7 @@ public class BoardGraphGenerator {
     }
 
     public UndirectedGraph<Integer, Connection> generateGraph() {
-        graph = new SimpleGraph<>(Connection.class);
+        graph = new Multigraph<>(Connection.class);
         BoardFileParser boardFileParser = new BoardFileParser(fileName);
         List<List<Action>> positionActions = boardFileParser.getParsedData();
         fillGraphFromPositionActions(positionActions);
