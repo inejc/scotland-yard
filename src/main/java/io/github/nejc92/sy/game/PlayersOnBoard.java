@@ -85,6 +85,11 @@ public class PlayersOnBoard {
         this.hidersMostProbablePosition = hidersMostProbablePosition;
     }
 
+
+    protected int[] getPlayersActualPositions() {
+        return playersActualPositions;
+    }
+
     protected int getNumberOfPlayers() {
         return players.length;
     }

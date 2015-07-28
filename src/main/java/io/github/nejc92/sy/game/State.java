@@ -59,6 +59,22 @@ public class State implements MctsDomainState<Action, Player> {
         inSimulation = true;
     }
 
+    public void printNewRound() {
+        if (currentPlayerIsHider()) {
+            System.out.println("ROUND: " + currentRound);
+            if (isHiderSurfacesRound())
+                System.out.println("HIDER SURFACES!");
+            System.out.println("----------");
+        }
+    }
+
+    public void printPositions() {
+        Arrays.stream(playersOnBoard.getPlayersActualPositions()).forEach(
+                position -> System.out.print(position + " ")
+        );
+        System.out.println();
+    }
+
     @Override
     public boolean isTerminal() {
         return seekersWon() || hiderWon();

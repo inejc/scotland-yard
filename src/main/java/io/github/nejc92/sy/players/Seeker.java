@@ -30,4 +30,11 @@ public abstract class Seeker extends Player {
         else
             return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Seeker{" +
+                "color=" + color +
+                '}';
+    }
 }

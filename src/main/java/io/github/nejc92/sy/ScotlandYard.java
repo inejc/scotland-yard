@@ -12,20 +12,32 @@ import io.github.nejc92.sy.players.Seeker;
 public class ScotlandYard {
 
     public static void main(String... args) {
-        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(15);
+        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(20000);
         mcts.dontClone(Board.class);
         Player[] players = initializePlayers();
         State state = State.initialize(players);
         while (!state.isTerminal()) {
+            state.printNewRound();
+            System.out.println("Current player: " + state.getCurrentAgent());
+            System.out.print("Positions: ");
+            state.printPositions();
             if (state.getAvailableActionsForCurrentAgent().size() > 0) {
                 state.setSearchModeOn();
                 Action mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
+                System.out.println(mostPromisingAction);
                 state.setSearchModeOff();
                 state.performActionForCurrentAgent(mostPromisingAction);
             }
             else
                 state.skipCurrentAgent();
+            System.out.print("New positions: ");
+            state.printPositions();
+            System.out.println();
         }
+        if (state.seekersWon())
+            System.out.println("Seekers won!");
+        else
+            System.out.println("Hider won!");
     }
 
     private static Player[] initializePlayers() {

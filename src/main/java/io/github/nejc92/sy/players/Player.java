@@ -94,7 +94,7 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     protected abstract Action getActionFromStatesAvailableActionsForSimulation(State state);
 
-//    protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
+    //    protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
 //        List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
 //        Collections.shuffle(availableActions);
 //        return availableActions.get(0);
