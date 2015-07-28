@@ -96,10 +96,10 @@ public class State implements MctsDomainState<Action, Player> {
     @Override
     public MctsDomainState performActionForCurrentAgent(Action action) {
         validateIsAvailableAction(action);
-        if (searchInvokingPlayerIsHider)
-            playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
-        else
+        if (inSearch && !searchInvokingPlayerIsHider)
             playersOnBoard.movePlayerFromSeekersPov(currentPlayerIndex, action);
+        else
+            playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
         if (playersOnBoard.playerIsHider(currentPlayerIndex))
             lastHidersTransportation = action.getTransportation();
         prepareForNextPlayer();
@@ -122,6 +122,12 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     @Override
+    public MctsDomainState skipCurrentAgent() {
+        prepareForNextPlayer();
+        return this;
+    }
+
+    @Override
     public int getNumberOfAvailableActionsForCurrentAgent() {
         return getAvailableActionsForCurrentAgent().size();
     }
@@ -129,10 +135,10 @@ public class State implements MctsDomainState<Action, Player> {
     @Override
     public List<Action> getAvailableActionsForCurrentAgent() {
         List<Action> availableActions;
-        if (searchInvokingPlayerIsHider)
-            availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
-        else
+        if (inSearch && !searchInvokingPlayerIsHider)
             availableActions = playersOnBoard.getAvailableActionsFromSeekersPov(currentPlayerIndex);
+        else
+            availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
         if (playersOnBoard.playerIsHider(currentPlayerIndex)) {
             // HUMAN?
             availableActions = addBlackFareActionsForHiderIfOptimal(

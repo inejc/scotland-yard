@@ -12,15 +12,19 @@ import io.github.nejc92.sy.players.Seeker;
 public class ScotlandYard {
 
     public static void main(String... args) {
-        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(500);
+        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(15);
         mcts.dontClone(Board.class);
         Player[] players = initializePlayers();
         State state = State.initialize(players);
         while (!state.isTerminal()) {
-            state.setSearchModeOn();
-            Action mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
-            state.setSearchModeOff();
-            state.performActionForCurrentAgent(mostPromisingAction);
+            if (state.getAvailableActionsForCurrentAgent().size() > 0) {
+                state.setSearchModeOn();
+                Action mostPromisingAction = mcts.uctSearchWithExploration(state, 0.4);
+                state.setSearchModeOff();
+                state.performActionForCurrentAgent(mostPromisingAction);
+            }
+            else
+                state.skipCurrentAgent();
         }
     }
 

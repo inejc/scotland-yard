@@ -28,7 +28,19 @@ public class PlayersOnBoard {
         Board board = Board.initialize();
         int[] playersPositions = generateRandomPlayersPositions(players.length);
         List<Integer> hidersPossibleLocations = calculateInitialHidersPossibleLocations(playersPositions);
-        return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations);
+        Collections.shuffle(hidersPossibleLocations);
+        int hidersMostProbablePosition = hidersPossibleLocations.get(0);
+        return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations,
+                hidersMostProbablePosition);
+    }
+
+    protected static PlayersOnBoard initializeTest(Player[] players, int[] playersPositions,
+                                                   int hidersMostProbablePosition) {
+        validatePlayers(players);
+        Board board = Board.initialize();
+        List<Integer> hidersPossibleLocations = calculateInitialHidersPossibleLocations(playersPositions);
+        return new PlayersOnBoard(board, players, playersPositions, hidersPossibleLocations,
+                hidersMostProbablePosition);
     }
 
     private static void validatePlayers(Player[] players) {
@@ -65,11 +77,12 @@ public class PlayersOnBoard {
     }
 
     private PlayersOnBoard(Board board, Player[] players, int[] playersPositions,
-                           List<Integer> hidersPossiblePositions) {
+                           List<Integer> hidersPossiblePositions, int hidersMostProbablePosition) {
         this.board = board;
         this.players = players;
         this.playersActualPositions = playersPositions;
         this.hidersPossiblePositions = hidersPossiblePositions;
+        this.hidersMostProbablePosition = hidersMostProbablePosition;
     }
 
     protected int getNumberOfPlayers() {
@@ -198,7 +211,7 @@ public class PlayersOnBoard {
     }
 
     protected void removeCurrentSeekersPositionFromPossibleHidersPositions(int playerIndex) {
-        hidersPossiblePositions.remove(playersActualPositions[playerIndex]);
+        hidersPossiblePositions.remove(new Integer(playersActualPositions[playerIndex]));
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
@@ -213,8 +226,7 @@ public class PlayersOnBoard {
             }
         }
         newHidersPossiblePositions.removeAll(getSeekersPositions(playersActualPositions));
-        // remove duplicates?
-        return newHidersPossiblePositions;
+        return new ArrayList<>(new LinkedHashSet<>(newHidersPossiblePositions));
     }
 
     private int getMostProbableHidersPosition() {

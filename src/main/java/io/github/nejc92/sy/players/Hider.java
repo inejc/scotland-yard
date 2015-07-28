@@ -44,7 +44,10 @@ public abstract class Hider extends Player {
 
     @Override
     public double getRewardFromTerminalState(State state) {
-        return 0;
+        if (state.hiderWon())
+            return 1;
+        else
+            return 0;
     }
 
     public boolean shouldUseBlackfareTicket(int currentRound, List<Action> actions) {

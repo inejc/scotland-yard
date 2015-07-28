@@ -25,6 +25,9 @@ public abstract class Seeker extends Player {
 
     @Override
     public double getRewardFromTerminalState(State state) {
-        return 0;
+        if (state.seekersWon())
+            return 1;
+        else
+            return 0;
     }
 }

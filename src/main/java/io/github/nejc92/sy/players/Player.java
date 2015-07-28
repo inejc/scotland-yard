@@ -84,7 +84,10 @@ public abstract class Player implements MctsDomainAgent<State> {
         state.setSimulationModeOn();
         while (!state.isTerminal()) {
             Action randomAction = getActionFromStatesAvailableActionsForSimulation(state);
-            state.performActionForCurrentAgent(randomAction);
+            if (randomAction != null)
+                state.performActionForCurrentAgent(randomAction);
+            else
+                state.skipCurrentAgent();
         }
         return state;
     }

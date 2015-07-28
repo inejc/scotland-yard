@@ -16,6 +16,9 @@ public class RandomSeeker extends Seeker {
     protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         Collections.shuffle(availableActions);
-        return availableActions.get(0);
+        if (availableActions.size() > 0)
+            return availableActions.get(0);
+        else
+            return null;
     }
 }
