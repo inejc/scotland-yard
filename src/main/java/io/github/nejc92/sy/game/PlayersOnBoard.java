@@ -124,6 +124,7 @@ public class PlayersOnBoard {
         List<Action> availableActions = new ArrayList<>(possibleActions);
         availableActions = removeActionsWithOccupiedDestinations(availableActions);
         availableActions = removeActionsBecauseOfNoPlayersTickets(availableActions, playerIndex);
+        // remove black fair tickets for hider too
         if (playerIsHider(playerIndex))
             availableActions = fixHidersBlackFareActions((Hider) players[playerIndex], availableActions);
         return availableActions;

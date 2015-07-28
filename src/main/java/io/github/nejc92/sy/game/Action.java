@@ -44,4 +44,9 @@ public class Action {
         result = 31 * result + destination;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return transportation + " to " + destination;
+    }
 }

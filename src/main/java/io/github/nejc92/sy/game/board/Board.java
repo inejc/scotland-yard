@@ -29,11 +29,13 @@ public class Board {
 
     public List<Integer> getDestinationsForPosition(int position) {
        return graph.edgesOf(position).stream()
+               .filter(connection -> connection.getVertex1() == position)
                .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
     public List<Action> getActionsForPosition(int position) {
         return graph.edgesOf(position).stream()
+                .filter(connection -> connection.getVertex1() == position)
                 .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))
                 .collect(Collectors.toList());
     }
@@ -41,13 +43,15 @@ public class Board {
     public List<Integer> getTransportationDestinationsForPosition (
             Connection.Transportation transportation, int position) {
         return graph.edgesOf(position).stream()
-                .filter(connection -> connection.isTransportation(transportation))
+                .filter(connection -> connection.isTransportation(transportation)
+                        && connection.getVertex1() == position)
                 .map(Connection::getVertex2).collect(Collectors.toList());
     }
 
     public List<Action> getTransportationActionsForPosition(Connection.Transportation transportation, int position) {
         return graph.edgesOf(position).stream()
-                .filter(connection -> connection.isTransportation(transportation))
+                .filter(connection -> connection.isTransportation(transportation)
+                        && connection.getVertex1() == position)
                 .map(connection -> new Action(connection.getTransportation(), connection.getVertex2()))
                 .collect(Collectors.toList());
     }
