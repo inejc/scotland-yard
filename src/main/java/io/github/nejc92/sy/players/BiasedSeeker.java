@@ -5,7 +5,7 @@ import io.github.nejc92.sy.game.State;
 
 import java.util.List;
 
-public class BiasedSeeker extends RandomSeeker {
+public class BiasedSeeker extends Seeker {
 
     public BiasedSeeker(Operator operator, Seeker.Color color) {
         super(operator, color);
@@ -15,8 +15,12 @@ public class BiasedSeeker extends RandomSeeker {
     protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         if (availableActions.size() > 0)
-            return biased;
+            return getBiasedForSeekerActionFromActions(availableActions);
         else
             return null;
+    }
+
+    private Action getBiasedForSeekerActionFromActions(List<Action> actions) {
+        return null;
     }
 }

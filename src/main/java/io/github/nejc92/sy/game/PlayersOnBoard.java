@@ -266,8 +266,11 @@ public class PlayersOnBoard {
     private int getMostProbableHidersPosition() {
         if (hidersPossiblePositions.size() < 1)
             return 0;
-        else
-            return getMostProbableHidersPositionConfidently();
+        else {
+            int mostProbablePosition = getMostProbableHidersPositionConfidently();
+            System.out.println("Hider's most probable position: " + mostProbablePosition);
+            return mostProbablePosition;
+        }
     }
 
     private int getMostProbableHidersPositionConfidently() {

@@ -5,7 +5,7 @@ import io.github.nejc92.sy.game.State;
 
 import java.util.List;
 
-public class BiasedHider extends RandomHider {
+public class BiasedHider extends Hider {
 
     public BiasedHider(Operator operator) {
         super(operator);
@@ -15,8 +15,12 @@ public class BiasedHider extends RandomHider {
     protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         if (availableActions.size() > 0)
-            return biased;
+            return getBiasedForHiderActionFromActions(availableActions);
         else
             return null;
+    }
+
+    private Action getBiasedForHiderActionFromActions(List<Action> actions) {
+        return null;
     }
 }

@@ -96,28 +96,28 @@ public class PlayersOnBoardTest {
         assertEquals(availableActions, playersOnBoard.getAvailableActionsFromSeekersPov(1));
     }
 
-    @Test
-    public void testMovePlayerFromActualPosition() {
-
-    }
-
-    @Test
-    public void testMovePlayerFromSeekersPov() {
-
-    }
-
-    @Test
-    public void testSetHidersActualAsMostProbablePosition() throws Exception {
-
-    }
-
-    @Test
-    public void testRecalculateHidersMostProbablePosition() throws Exception {
-
-    }
-
-    @Test
-    public void testRemoveCurrentSeekersPositionFromPossibleHidersPositions() throws Exception {
-
-    }
+//    @Test
+//    public void testMovePlayerFromActualPosition() {
+//
+//    }
+//
+//    @Test
+//    public void testMovePlayerFromSeekersPov() {
+//
+//    }
+//
+//    @Test
+//    public void testSetHidersActualAsMostProbablePosition() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void testRecalculateHidersMostProbablePosition() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void testRemoveCurrentSeekersPositionFromPossibleHidersPositions() throws Exception {
+//
+//    }
 }
