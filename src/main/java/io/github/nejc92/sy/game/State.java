@@ -6,10 +6,7 @@ import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 import io.github.nejc92.sy.players.Seeker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class State implements MctsDomainState<Action, Player> {
@@ -108,8 +105,16 @@ public class State implements MctsDomainState<Action, Player> {
         return playersOnBoard.playerIsHider(currentPlayerIndex);
     }
 
+    public boolean previousPlayerIsHider() {
+        return playersOnBoard.playerIsHider(previousPlayerIndex);
+    }
+
     public boolean currentPlayerIsHuman() {
         return playersOnBoard.playerIsHuman(currentPlayerIndex);
+    }
+
+    public boolean previousPlayerIsHuman() {
+        return playersOnBoard.playerIsHuman(previousPlayerIndex);
     }
 
     @Override
@@ -127,11 +132,13 @@ public class State implements MctsDomainState<Action, Player> {
         if (playersOnBoard.playerIsHider(currentPlayerIndex))
             lastHidersTransportation = action.getTransportation();
         prepareForNextPlayer();
-        // HUMAN? check hider double move, if yes: currentPlayerIndex--
-        // if (!inSimulation && currentPlayerIsHuman() && currentPlayerIsHider())
-            // ask
-        // else if (currentPlayerIsHuman() && currentPlayerIsHider() && playersOnBoard.c)
-            // check
+        if (previousPlayerIsHider() && inSearch) {
+            Hider hider = (Hider)getPreviousAgent();
+            if (hider.shouldUseDoubleMove()) {
+                skipAllSeekers();
+                hider.removeDoubleMoveCard();
+            }
+        }
         return this;
     }
 
@@ -143,6 +150,12 @@ public class State implements MctsDomainState<Action, Player> {
 
     private boolean isAvailableAction(Action action) {
         return getAvailableActionsForCurrentAgent().contains(action);
+    }
+
+
+    public void skipAllSeekers() {
+        currentPlayerIndex--;
+        currentRound++;
     }
 
     @Override
@@ -163,7 +176,7 @@ public class State implements MctsDomainState<Action, Player> {
             availableActions = playersOnBoard.getAvailableActionsFromSeekersPov(currentPlayerIndex);
         else
             availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
-        if (playersOnBoard.playerIsHider(currentPlayerIndex)) {
+        if (currentPlayerIsHider()) {
             if (currentPlayerIsHuman() && !inSearch && !inSimulation)
                 availableActions = addBlackFareActionsIfAvailableTickets(
                         (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);

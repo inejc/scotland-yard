@@ -4,10 +4,7 @@ import io.github.nejc92.mcts.Mcts;
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.board.Board;
 import io.github.nejc92.sy.game.State;
-import io.github.nejc92.sy.players.Player;
-import io.github.nejc92.sy.players.RandomHider;
-import io.github.nejc92.sy.players.RandomSeeker;
-import io.github.nejc92.sy.players.Seeker;
+import io.github.nejc92.sy.players.*;
 
 import java.util.Scanner;
 
@@ -29,7 +26,7 @@ public class ScotlandYard {
                 if (state.currentPlayerIsHuman()) {
                     System.out.println("Available actions: " + state.getAvailableActionsForCurrentAgent());
                     System.out.print("Enter action: ");
-                    int action = scanner.nextInt();
+                    int action = Integer.parseInt(scanner.nextLine());
                     mostPromisingAction = state.getAvailableActionsForCurrentAgent().get(action);
                 }
                 else {
@@ -45,6 +42,17 @@ public class ScotlandYard {
             System.out.print("New positions: ");
             state.printPositions();
             System.out.println();
+            if (state.previousPlayerIsHider() && state.previousPlayerIsHuman()) {
+                Hider hider = (Hider)state.getPreviousAgent();
+                if (hider.hasDoubleMoveCard()) {
+                    System.out.println("Use double move? y/n");
+                    String doubleMove = scanner.nextLine();
+                    if (doubleMove.equals("y")) {
+                        state.skipAllSeekers();
+                        hider.removeDoubleMoveCard();
+                    }
+                }
+            }
         }
         if (state.seekersWon())
             System.out.println("Seekers won!");

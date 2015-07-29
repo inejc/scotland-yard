@@ -68,7 +68,7 @@ public abstract class Hider extends Player {
     }
 
     public boolean shouldUseDoubleMove() {
-        return false;
+        return hasDoubleMoveCard();
     }
 
     @Override
