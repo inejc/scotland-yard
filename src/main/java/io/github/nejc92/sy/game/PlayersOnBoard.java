@@ -24,6 +24,7 @@ public class PlayersOnBoard {
     private int[] playersActualPositions;
     private List<Integer> hidersPossiblePositions;
     private int hidersMostProbablePosition;
+    private int previousHidersMostProbablePosition;
 
     protected static PlayersOnBoard initialize(Player[] players) {
         validatePlayers(players);
@@ -117,7 +118,7 @@ public class PlayersOnBoard {
     }
 
     protected boolean anySeekerOnHidersMostProbablePosition() {
-        return anySeekerOnPosition(hidersMostProbablePosition);
+        return anySeekerOnPosition(previousHidersMostProbablePosition);
     }
 
     protected boolean anySeekerOnHidersActualPosition() {
@@ -131,7 +132,7 @@ public class PlayersOnBoard {
     }
 
     protected boolean seekerOnHidersMostProbablePosition(Seeker seeker) {
-        return seekerOnPosition(seeker, hidersMostProbablePosition);
+        return seekerOnPosition(seeker, previousHidersMostProbablePosition);
     }
 
     protected boolean seekerOnHidersActualPosition(Seeker seeker) {
@@ -246,6 +247,7 @@ public class PlayersOnBoard {
 
     protected void removeCurrentSeekersPositionFromPossibleHidersPositions(int playerIndex) {
         hidersPossiblePositions.remove(new Integer(playersActualPositions[playerIndex]));
+        previousHidersMostProbablePosition = hidersMostProbablePosition;
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
@@ -265,10 +267,10 @@ public class PlayersOnBoard {
 
     private int getMostProbableHidersPosition() {
         if (hidersPossiblePositions.size() < 1)
-            return 0;
+            return -1;
         else {
             int mostProbablePosition = getMostProbableHidersPositionConfidently();
-            System.out.println("Hider's most probable position: " + mostProbablePosition);
+            //System.out.println("Hider's most probable position: " + mostProbablePosition);
             return mostProbablePosition;
         }
     }
@@ -305,5 +307,15 @@ public class PlayersOnBoard {
             }
         }
         return hidersPossiblePositions.get(chosen);
+    }
+
+    public int sumDistancesFromPositionToAllPossibleHidersPositions(int position) {
+        return hidersPossiblePositions.stream()
+                .mapToInt(possiblePosition -> board.shortestDistanceBetween(position, possiblePosition))
+                .sum();
+    }
+
+    public int shortestDistanceBetweenPositionAndHidersMostProbablePosition(int position1) {
+        return board.shortestDistanceBetween(position1, hidersMostProbablePosition);
     }
 }

@@ -81,7 +81,6 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
-        state.setSimulationModeOn();
         while (!state.isTerminal()) {
             Action randomAction = getActionFromStatesAvailableActionsForSimulation(state);
             if (randomAction != null)

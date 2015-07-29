@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class State implements MctsDomainState<Action, Player> {
 
-    private static final int MAX_NUMBER_OF_ROUNDS = 23;
+    private static final int MAX_NUMBER_OF_ROUNDS = 24;
     private static final List<Integer> HIDER_SURFACES_ROUNDS = new ArrayList<>(Arrays.asList(3, 8, 13, 18, 24));
 
     private final PlayersOnBoard playersOnBoard;
@@ -22,7 +22,6 @@ public class State implements MctsDomainState<Action, Player> {
     private Connection.Transportation lastHidersTransportation;
     private boolean inSearch;
     private boolean searchInvokingPlayerIsHider;
-    private boolean inSimulation;
 
     public static State initialize(Player[] players) {
         PlayersOnBoard playersOnBoard = PlayersOnBoard.initialize(players);
@@ -37,7 +36,10 @@ public class State implements MctsDomainState<Action, Player> {
         this.previousPlayerIndex = playersOnBoard.getNumberOfPlayers() - 1;
         this.lastHidersTransportation = null;
         this.inSearch = false;
-        this.inSimulation = false;
+    }
+
+    public PlayersOnBoard getPlayersOnBoard() {
+        return playersOnBoard;
     }
 
     public void setSearchModeOn() {
@@ -51,10 +53,6 @@ public class State implements MctsDomainState<Action, Player> {
 
     private boolean isHiderSurfacesRound() {
         return HIDER_SURFACES_ROUNDS.contains(currentRound);
-    }
-
-    public void setSimulationModeOn() {
-        inSimulation = true;
     }
 
     public void printNewRound() {
@@ -81,6 +79,7 @@ public class State implements MctsDomainState<Action, Player> {
     public boolean seekersWon() {
         if (inSearch && !searchInvokingPlayerIsHider)
             return playersOnBoard.anySeekerOnHidersMostProbablePosition();
+
         else
             return playersOnBoard.anySeekerOnHidersActualPosition();
     }
@@ -131,6 +130,8 @@ public class State implements MctsDomainState<Action, Player> {
             playersOnBoard.movePlayerFromActualPosition(currentPlayerIndex, action);
         if (playersOnBoard.playerIsHider(currentPlayerIndex))
             lastHidersTransportation = action.getTransportation();
+        //if (!inSearch)
+        setHidersMostProbablePosition(lastHidersTransportation);
         prepareForNextPlayer();
         if (previousPlayerIsHider() && (previousPlayerIsHuman() && inSearch || !previousPlayerIsHuman())) {
             Hider hider = (Hider)getPreviousAgent();
@@ -177,7 +178,7 @@ public class State implements MctsDomainState<Action, Player> {
         else
             availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
         if (currentPlayerIsHider()) {
-            if (currentPlayerIsHuman() && !inSearch && !inSimulation)
+            if (currentPlayerIsHuman() && !inSearch)
                 availableActions = addBlackFareActionsIfAvailableTickets(
                         (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);
             else {
@@ -216,8 +217,6 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     private void prepareForNextPlayer() {
-        if (!inSearch)
-            setHidersMostProbablePosition(lastHidersTransportation);
         if (isLastPlayerOfRound())
             currentRound++;
         previousPlayerIndex = currentPlayerIndex;

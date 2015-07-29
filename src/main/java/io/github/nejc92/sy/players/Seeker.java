@@ -28,7 +28,7 @@ public abstract class Seeker extends Player {
         if (state.seekerWon(this))
             return 1;
         else if (state.seekersWon())
-            return 0.5;
+            return 0.75;
         else
             return 0;
     }
