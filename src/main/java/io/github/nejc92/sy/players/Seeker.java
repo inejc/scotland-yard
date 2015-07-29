@@ -25,16 +25,29 @@ public abstract class Seeker extends Player {
 
     @Override
     public double getRewardFromTerminalState(State state) {
-        if (state.seekersWon())
+        if (state.seekerWon(this))
             return 1;
+        else if (state.seekersWon())
+            return 0.5;
         else
             return 0;
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Seeker seeker = (Seeker) o;
+        return color == seeker.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return color != null ? color.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
-        return "Seeker{" +
-                "color=" + color +
-                '}';
+        return "Seeker{color=" + color + '}';
     }
 }

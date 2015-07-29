@@ -4,6 +4,7 @@ import io.github.nejc92.mcts.MctsDomainState;
 import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
+import io.github.nejc92.sy.players.Seeker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,13 +83,20 @@ public class State implements MctsDomainState<Action, Player> {
 
     public boolean seekersWon() {
         if (inSearch && !searchInvokingPlayerIsHider)
-            return playersOnBoard.seekerOnHidersMostProbablePosition();
+            return playersOnBoard.anySeekerOnHidersMostProbablePosition();
         else
-            return playersOnBoard.seekerOnHidersActualPosition();
+            return playersOnBoard.anySeekerOnHidersActualPosition();
     }
 
     public boolean hiderWon() {
         return currentRound == MAX_NUMBER_OF_ROUNDS;
+    }
+
+    public boolean seekerWon(Seeker seeker) {
+        if (inSearch && !searchInvokingPlayerIsHider)
+            return playersOnBoard.seekerOnHidersMostProbablePosition(seeker);
+        else
+            return playersOnBoard.seekerOnHidersActualPosition(seeker);
     }
 
     @Override
@@ -156,11 +164,21 @@ public class State implements MctsDomainState<Action, Player> {
         else
             availableActions = playersOnBoard.getAvailableActionsForActualPosition(currentPlayerIndex);
         if (playersOnBoard.playerIsHider(currentPlayerIndex)) {
-            // HUMAN?
-            availableActions = addBlackFareActionsForHiderIfOptimal(
+            if (currentPlayerIsHuman() && !inSearch && !inSimulation)
+                availableActions = addBlackFareActionsIfAvailableTickets(
+                        (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);
+            else {
+                availableActions = addBlackFareActionsForHiderIfOptimal(
                     (Hider) playersOnBoard.getPlayerAtIndex(currentPlayerIndex), availableActions);
+            }
         }
         return availableActions;
+    }
+
+    List<Action> addBlackFareActionsIfAvailableTickets(Hider hider, List<Action> actions) {
+        if (hider.hasBlackFareTicket())
+            return addBlackFareActions(actions);
+        return actions;
     }
 
     List<Action> addBlackFareActionsForHiderIfOptimal(Hider hider, List<Action> actions) {

@@ -4,6 +4,7 @@ import io.github.nejc92.sy.game.board.Board;
 import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
+import io.github.nejc92.sy.players.Seeker;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,18 +107,31 @@ public class PlayersOnBoard {
         return players[playerIndex];
     }
 
-    protected boolean seekerOnHidersMostProbablePosition() {
-        return seekerOnPosition(hidersMostProbablePosition);
+    protected boolean anySeekerOnHidersMostProbablePosition() {
+        return anySeekerOnPosition(hidersMostProbablePosition);
     }
 
-    protected boolean seekerOnHidersActualPosition() {
-        return seekerOnPosition(playersActualPositions[HIDERS_INDEX]);
+    protected boolean anySeekerOnHidersActualPosition() {
+        return anySeekerOnPosition(playersActualPositions[HIDERS_INDEX]);
     }
 
-    protected boolean seekerOnPosition(int position) {
+    protected boolean anySeekerOnPosition(int position) {
         return Arrays.stream(playersActualPositions)
                 .skip(SKIP_HIDER)
-                .anyMatch(hidersPosition -> hidersPosition == position);
+                .anyMatch(seekersPosition -> seekersPosition == position);
+    }
+
+    protected boolean seekerOnHidersMostProbablePosition(Seeker seeker) {
+        return seekerOnPosition(seeker, hidersMostProbablePosition);
+    }
+
+    protected boolean seekerOnHidersActualPosition(Seeker seeker) {
+        return seekerOnPosition(seeker, playersActualPositions[HIDERS_INDEX]);
+    }
+
+    protected boolean seekerOnPosition(Seeker seeker, int position) {
+        int seekerIndex = IntStream.range(1, players.length).filter(i -> players[i].equals(seeker)).findFirst().getAsInt();
+        return playersActualPositions[seekerIndex] == position;
     }
 
     protected List<Action> getAvailableActionsFromSeekersPov(int playerIndex) {
@@ -142,8 +156,9 @@ public class PlayersOnBoard {
         List<Action> availableActions = new ArrayList<>(possibleActions);
         availableActions = removeActionsWithOccupiedDestinations(availableActions);
         availableActions = removeActionsBecauseOfNoPlayersTickets(availableActions, playerIndex);
-        // remove black fair tickets for hider too
-        if (playerIsHider(playerIndex))
+        if (!playerIsHider(playerIndex))
+            availableActions = removeTransportationActions(Connection.Transportation.BLACK_FARE, availableActions);
+        else
             availableActions = fixHidersBlackFareActions((Hider) players[playerIndex], availableActions);
         return availableActions;
     }
@@ -197,7 +212,12 @@ public class PlayersOnBoard {
     }
 
     private void removeTransportationCard(int playerIndex, Action action) {
-        players[playerIndex].removeTicket(action.getTransportation());
+        if (playerIsHider(playerIndex) && action.isTransportationAction(Connection.Transportation.BLACK_FARE)) {
+            Hider hider = (Hider)getPlayerAtIndex(HIDERS_INDEX);
+            hider.removeBlackFareTicket();
+        }
+        else
+            players[playerIndex].removeTicket(action.getTransportation());
         if (!playerIsHider(playerIndex)) {
             Hider hider = (Hider)getPlayerAtIndex(HIDERS_INDEX);
             hider.addTicket(action.getTransportation());

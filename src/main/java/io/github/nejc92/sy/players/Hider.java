@@ -4,6 +4,8 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.game.State;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Hider extends Player {
@@ -11,6 +13,9 @@ public abstract class Hider extends Player {
     private static final int TAXI_TICKETS = 4;
     private static final int BUS_TICKETS = 3;
     private static final int UNDERGROUND_TICKETS = 3;
+    private static final List<Integer> SHOULDNT_USE_BLACKFAIR_ROUNDS = new ArrayList<>(
+            Arrays.asList(1, 2, 3, 8, 13, 18, 24)
+    );
 
     private int doubleMoveCards;
     private int blackFareTickets;
@@ -25,7 +30,7 @@ public abstract class Hider extends Player {
         doubleMoveCards--;
     }
 
-    public void removeBlackFareTickets() {
+    public void removeBlackFareTicket() {
         blackFareTickets--;
     }
 
@@ -51,7 +56,15 @@ public abstract class Hider extends Player {
     }
 
     public boolean shouldUseBlackfareTicket(int currentRound, List<Action> actions) {
-        return false;
+        return hasBlackFareTicket() && optimalToUseBlackFareTicket(currentRound, actions);
+    }
+
+    private boolean optimalToUseBlackFareTicket(int currentRound, List<Action> actions) {
+        return !SHOULDNT_USE_BLACKFAIR_ROUNDS.contains(currentRound) && !actionsContainOnlyTaxis(actions);
+    }
+
+    private boolean actionsContainOnlyTaxis(List<Action> actions) {
+        return actions.stream().allMatch(action -> action.isTransportationAction(Connection.Transportation.TAXI));
     }
 
     public boolean shouldUseDoubleMove() {

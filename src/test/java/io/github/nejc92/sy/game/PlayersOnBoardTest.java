@@ -65,16 +65,16 @@ public class PlayersOnBoardTest {
 
     @Test
     public void testSeekerOnHidersMostProbablePosition() {
-        assertFalse(playersOnBoard.seekerOnHidersMostProbablePosition());
+        assertFalse(playersOnBoard.anySeekerOnHidersMostProbablePosition());
         playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 103));
-        assertTrue(playersOnBoard.seekerOnHidersMostProbablePosition());
+        assertTrue(playersOnBoard.anySeekerOnHidersMostProbablePosition());
     }
 
     @Test
     public void testSeekerOnHidersActualPosition() {
-        assertFalse(playersOnBoard.seekerOnHidersActualPosition());
+        assertFalse(playersOnBoard.anySeekerOnHidersActualPosition());
         playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 34));
-        assertTrue(playersOnBoard.seekerOnHidersActualPosition());
+        assertTrue(playersOnBoard.anySeekerOnHidersActualPosition());
     }
 
     @Test
