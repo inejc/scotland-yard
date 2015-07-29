@@ -132,9 +132,9 @@ public class State implements MctsDomainState<Action, Player> {
         if (playersOnBoard.playerIsHider(currentPlayerIndex))
             lastHidersTransportation = action.getTransportation();
         prepareForNextPlayer();
-        if (previousPlayerIsHider() && inSearch) {
+        if (previousPlayerIsHider() && (previousPlayerIsHuman() && inSearch || !previousPlayerIsHuman())) {
             Hider hider = (Hider)getPreviousAgent();
-            if (hider.shouldUseDoubleMove()) {
+            if (hider.shouldUseDoubleMove(playersOnBoard)) {
                 skipAllSeekers();
                 hider.removeDoubleMoveCard();
             }

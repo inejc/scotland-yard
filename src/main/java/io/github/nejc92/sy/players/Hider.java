@@ -1,6 +1,7 @@
 package io.github.nejc92.sy.players;
 
 import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.game.PlayersOnBoard;
 import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.game.State;
 
@@ -13,9 +14,10 @@ public abstract class Hider extends Player {
     private static final int TAXI_TICKETS = 4;
     private static final int BUS_TICKETS = 3;
     private static final int UNDERGROUND_TICKETS = 3;
-    private static final List<Integer> SHOULDNT_USE_BLACKFAIR_ROUNDS = new ArrayList<>(
+    private static final List<Integer> SHOULDNT_USE_BLACK_FAIR_ROUNDS = new ArrayList<>(
             Arrays.asList(1, 2, 3, 8, 13, 18, 24)
     );
+    private static final double SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD = 2.5;
 
     private int doubleMoveCards;
     private int blackFareTickets;
@@ -60,15 +62,19 @@ public abstract class Hider extends Player {
     }
 
     private boolean optimalToUseBlackFareTicket(int currentRound, List<Action> actions) {
-        return !SHOULDNT_USE_BLACKFAIR_ROUNDS.contains(currentRound) && !actionsContainOnlyTaxis(actions);
+        return !SHOULDNT_USE_BLACK_FAIR_ROUNDS.contains(currentRound) && !actionsContainOnlyTaxis(actions);
     }
 
     private boolean actionsContainOnlyTaxis(List<Action> actions) {
         return actions.stream().allMatch(action -> action.isTransportationAction(Connection.Transportation.TAXI));
     }
 
-    public boolean shouldUseDoubleMove() {
-        return hasDoubleMoveCard();
+    public boolean shouldUseDoubleMove(PlayersOnBoard playersOnBoard) {
+        return hasDoubleMoveCard() && optimalToUseDoubleMoveCard(playersOnBoard);
+    }
+
+    private boolean optimalToUseDoubleMoveCard(PlayersOnBoard playersOnBoard) {
+        return playersOnBoard.hidersAverageDistanceToSeekers() <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
     }
 
     @Override

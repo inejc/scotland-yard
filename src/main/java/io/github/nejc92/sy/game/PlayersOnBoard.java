@@ -17,6 +17,7 @@ public class PlayersOnBoard {
     private static final int SKIP_HIDER = 1;
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
             Arrays.asList(13, 26, 34, 50, 53, 62, 91, 94, 103, 112, 117, 132, 138, 141, 155, 174, 197, 198));
+    private static final double[] DISTANCE_TO_HIDER_PROBABILITIES = {0.196, 0.671, 0.540, 0.384, 0.196};
 
     private final Board board;
     private final Player[] players;
@@ -89,6 +90,14 @@ public class PlayersOnBoard {
 
     protected int[] getPlayersActualPositions() {
         return playersActualPositions;
+    }
+
+    public double hidersAverageDistanceToSeekers() {
+        int hidersPosition = playersActualPositions[HIDERS_INDEX];
+        return Arrays.stream(playersActualPositions)
+                .skip(SKIP_HIDER)
+                .map(position -> board.shortestDistanceBetween(hidersPosition, position))
+                .average().getAsDouble();
     }
 
     protected int getNumberOfPlayers() {
@@ -255,6 +264,18 @@ public class PlayersOnBoard {
     }
 
     private int getMostProbableHidersPosition() {
+        if (hidersPossiblePositions.size() < 1)
+            return 0;
+        else
+            return getMostProbableHidersPositionConfidently();
+    }
+
+    private int getMostProbableHidersPositionConfidently() {
+        double[] probabilities = setPositionsProbabilities();
+        return rouletteWheelSelect(probabilities);
+    }
+
+    private double[] setPositionsProbabilities() {
         List<Integer> seekersPositions = getSeekersPositions(playersActualPositions);
         double[] probabilities = new double[hidersPossiblePositions.size()];
         for (int i = 0; i < hidersPossiblePositions.size(); i++) {
@@ -262,24 +283,15 @@ public class PlayersOnBoard {
             int minDistance = seekersPositions.stream().min(((position1, position2) -> Integer.compare(
                     board.shortestDistanceBetween(position1, position),
                     board.shortestDistanceBetween(position2, position)))).get();
-            switch (minDistance) {
-                case 1:
-                    probabilities[i] = 0.196;
-                    break;
-                case 2:
-                    probabilities[i] = 0.671;
-                    break;
-                case 3:
-                    probabilities[i] = 0.540;
-                    break;
-                case 4:
-                    probabilities[i] = 0.384;
-                    break;
-                default:
-                    probabilities[i] = 0.196;
-            }
+            int probabilityIndex = minDistance - 1;
+            if (probabilityIndex > 4)
+                probabilityIndex = 4;
+            probabilities[i] = DISTANCE_TO_HIDER_PROBABILITIES[probabilityIndex];
         }
-        // todo: fix whole method
+        return probabilities;
+    }
+
+    private int rouletteWheelSelect(double[] probabilities) {
         boolean notAccepted = true;
         int chosen = 0;
         double max_weight = Arrays.stream(probabilities).max().getAsDouble();
