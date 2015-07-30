@@ -29,6 +29,18 @@ public abstract class Player implements MctsDomainAgent<State> {
         this.undergroundTickets = undergroundTickets;
     }
 
+    public int getTaxiTickets() {
+        return taxiTickets;
+    }
+
+    public int getBusTickets() {
+        return busTickets;
+    }
+
+    public int getUndergroundTickets() {
+        return undergroundTickets;
+    }
+
     public boolean isHider() {
         return type == Type.HIDER;
     }
@@ -81,21 +93,23 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
+        state.setSimulationOn();
         while (!state.isTerminal()) {
-            Action randomAction = getActionFromStatesAvailableActionsForSimulation(state);
-            if (randomAction != null)
+            Action randomAction;
+            if (state.currentPlayerIsHider())
+                randomAction = getHidersActionFromStatesAvailableActionsForSimulation(state);
+            else
+                randomAction = getSeekersActionFromStatesAvailableActionsForSimulation(state);
+            if (randomAction != null) {
                 state.performActionForCurrentAgent(randomAction);
+            }
             else
                 state.skipCurrentAgent();
         }
         return state;
     }
 
-    protected abstract Action getActionFromStatesAvailableActionsForSimulation(State state);
+    protected abstract Action getHidersActionFromStatesAvailableActionsForSimulation(State state);
 
-    //    protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
-//        List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
-//        Collections.shuffle(availableActions);
-//        return availableActions.get(0);
-//    }
+    protected abstract Action getSeekersActionFromStatesAvailableActionsForSimulation(State state);
 }

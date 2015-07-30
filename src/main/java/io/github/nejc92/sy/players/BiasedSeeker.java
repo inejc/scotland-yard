@@ -13,7 +13,16 @@ public class BiasedSeeker extends Seeker {
     }
 
     @Override
-    protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
+    protected Action getHidersActionFromStatesAvailableActionsForSimulation(State state) {
+        List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
+        if (availableActions.size() > 0)
+            return getBiasedForHiderActionFromActions(availableActions, state.getPlayersOnBoard());
+        else
+            return null;
+    }
+
+    @Override
+    protected Action getSeekersActionFromStatesAvailableActionsForSimulation(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         if (availableActions.size() > 0)
             return getBiasedForSeekerActionFromActions(availableActions, state.getPlayersOnBoard());
@@ -21,13 +30,13 @@ public class BiasedSeeker extends Seeker {
             return null;
     }
 
-//    private Action getBiasedForSeekerActionFromActions(List<Action> actions, PlayersOnBoard playersOnBoard) {
-//        return actions.stream()
-//                .min((action1, action2) -> Integer.compare(
-//                        playersOnBoard.sumDistancesFromPositionToAllPossibleHidersPositions(action1.getDestination()),
-//                        playersOnBoard.sumDistancesFromPositionToAllPossibleHidersPositions(action2.getDestination())))
-//                .get();
-//    }
+    private Action getBiasedForHiderActionFromActions(List<Action> actions, PlayersOnBoard playersOnBoard) {
+        return actions.stream()
+                .max((action1, action2) -> Integer.compare(
+                        playersOnBoard.shortestDistanceBetweenPositionAndClosestSeeker(action1.getDestination()),
+                        playersOnBoard.shortestDistanceBetweenPositionAndClosestSeeker(action2.getDestination())))
+                .get();
+    }
 
     private Action getBiasedForSeekerActionFromActions(List<Action> actions, PlayersOnBoard playersOnBoard) {
         return actions.stream()

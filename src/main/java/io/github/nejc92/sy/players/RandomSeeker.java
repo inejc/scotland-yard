@@ -13,7 +13,17 @@ public class RandomSeeker extends Seeker {
     }
 
     @Override
-    protected Action getActionFromStatesAvailableActionsForSimulation(State state) {
+    protected Action getHidersActionFromStatesAvailableActionsForSimulation(State state) {
+        List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
+        Collections.shuffle(availableActions);
+        if (availableActions.size() > 0)
+            return availableActions.get(0);
+        else
+            return null;
+    }
+
+    @Override
+    protected Action getSeekersActionFromStatesAvailableActionsForSimulation(State state) {
         List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
         Collections.shuffle(availableActions);
         if (availableActions.size() > 0)

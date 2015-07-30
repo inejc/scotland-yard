@@ -48,6 +48,6 @@ public abstract class Seeker extends Player {
 
     @Override
     public String toString() {
-        return "Seeker{color=" + color + '}';
+        return color + " Seeker";
     }
 }

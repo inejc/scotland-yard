@@ -24,7 +24,7 @@ public class PlayersOnBoard {
     private int[] playersActualPositions;
     private List<Integer> hidersPossiblePositions;
     private int hidersMostProbablePosition;
-    private int previousHidersMostProbablePosition;
+    private int hidersMostProbablePositionPreviousRound;
 
     protected static PlayersOnBoard initialize(Player[] players) {
         validatePlayers(players);
@@ -117,9 +117,25 @@ public class PlayersOnBoard {
         return players[playerIndex];
     }
 
-    protected boolean anySeekerOnHidersMostProbablePosition() {
-        return anySeekerOnPosition(previousHidersMostProbablePosition);
+    public void printAllPositions() {
+        System.out.println();
+        System.out.println("Players:");
+        for (int i = 0; i < players.length; i++) {
+            System.out.println(players[i] + " on " + playersActualPositions[i] +
+                    " (taxi tickets: " + players[i].getTaxiTickets() +
+                    ", bus tickets: " + players[i].getBusTickets() +
+                    ", underground tickets: " + players[i].getUndergroundTickets() + ") ");
+        }
+        System.out.println();
     }
+
+    protected boolean anySeekerOnHidersMostProbablePosition() {
+        return anySeekerOnPosition(hidersMostProbablePositionPreviousRound);
+    }
+
+//    protected boolean anySeekerOnHidersPreviousMostProbablePosition() {
+//        return anySeekerOnPosition(previousHidersMostProbablePosition);
+//    }
 
     protected boolean anySeekerOnHidersActualPosition() {
         return anySeekerOnPosition(playersActualPositions[HIDERS_INDEX]);
@@ -132,8 +148,12 @@ public class PlayersOnBoard {
     }
 
     protected boolean seekerOnHidersMostProbablePosition(Seeker seeker) {
-        return seekerOnPosition(seeker, previousHidersMostProbablePosition);
+        return seekerOnPosition(seeker, hidersMostProbablePositionPreviousRound);
     }
+
+//    protected boolean seekerOnHidersPreviousMostProbablePosition(Seeker seeker) {
+//        return seekerOnPosition(seeker, previousHidersMostProbablePosition);
+//    }
 
     protected boolean seekerOnHidersActualPosition(Seeker seeker) {
         return seekerOnPosition(seeker, playersActualPositions[HIDERS_INDEX]);
@@ -237,17 +257,19 @@ public class PlayersOnBoard {
     protected void setHidersActualAsMostProbablePosition() {
         hidersPossiblePositions = new ArrayList<>();
         hidersPossiblePositions.add(playersActualPositions[HIDERS_INDEX]);
+        hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
         hidersMostProbablePosition = playersActualPositions[HIDERS_INDEX];
     }
 
     protected void recalculateHidersMostProbablePosition(Connection.Transportation transportation) {
         hidersPossiblePositions = recalculateHidersPossiblePositions(transportation);
+        hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
     protected void removeCurrentSeekersPositionFromPossibleHidersPositions(int playerIndex) {
         hidersPossiblePositions.remove(new Integer(playersActualPositions[playerIndex]));
-        previousHidersMostProbablePosition = hidersMostProbablePosition;
+        hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
@@ -268,11 +290,8 @@ public class PlayersOnBoard {
     private int getMostProbableHidersPosition() {
         if (hidersPossiblePositions.size() < 1)
             return -1;
-        else {
-            int mostProbablePosition = getMostProbableHidersPositionConfidently();
-            //System.out.println("Hider's most probable position: " + mostProbablePosition);
-            return mostProbablePosition;
-        }
+        else
+            return getMostProbableHidersPositionConfidently();
     }
 
     private int getMostProbableHidersPositionConfidently() {
@@ -309,13 +328,23 @@ public class PlayersOnBoard {
         return hidersPossiblePositions.get(chosen);
     }
 
-    public int sumDistancesFromPositionToAllPossibleHidersPositions(int position) {
-        return hidersPossiblePositions.stream()
-                .mapToInt(possiblePosition -> board.shortestDistanceBetween(position, possiblePosition))
-                .sum();
+    public void fixHidersProbablePosition() {
+        hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
     }
 
-    public int shortestDistanceBetweenPositionAndHidersMostProbablePosition(int position1) {
-        return board.shortestDistanceBetween(position1, hidersMostProbablePosition);
+//    public int sumDistancesFromPositionToAllPossibleHidersPositions(int position) {
+//        return hidersPossiblePositions.stream()
+//                .mapToInt(possiblePosition -> board.shortestDistanceBetween(position, possiblePosition))
+//                .sum();
+//    }
+
+    public int shortestDistanceBetweenPositionAndHidersMostProbablePosition(int position) {
+        return board.shortestDistanceBetween(position, hidersMostProbablePosition);
+    }
+
+    public int shortestDistanceBetweenPositionAndClosestSeeker(int position) {
+        return getSeekersPositions(playersActualPositions).stream()
+                .map(seekersPosition -> board.shortestDistanceBetween(position, seekersPosition))
+                .min(Integer::compare).get();
     }
 }
