@@ -63,12 +63,12 @@ public class PlayersOnBoardTest {
         assertEquals(PLAYERS[5], playersOnBoard.getPlayerAtIndex(5));
     }
 
-    @Test
-    public void testSeekerOnHidersMostProbablePosition() {
-        assertFalse(playersOnBoard.anySeekerOnHidersMostProbablePosition());
-        playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 103));
-        assertTrue(playersOnBoard.anySeekerOnHidersMostProbablePosition());
-    }
+//    @Test
+//    public void testSeekerOnHidersMostProbablePosition() {
+//        assertFalse(playersOnBoard.anySeekerOnHidersMostProbablePosition());
+//        playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 103));
+//        assertTrue(playersOnBoard.anySeekerOnHidersMostProbablePosition());
+//    }
 
     @Test
     public void testSeekerOnHidersActualPosition() {

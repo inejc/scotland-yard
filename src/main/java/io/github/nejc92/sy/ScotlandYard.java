@@ -13,7 +13,7 @@ public class ScotlandYard {
 
     public static void main(String... args) {
         Scanner scanner = new Scanner(System.in);
-        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(1000);
+        Mcts<State, Action, Player> mcts = Mcts.initializeIterations(10000);
         mcts.dontClone(Board.class);
         Player[] players = initializePlayers();
         State state = State.initialize(players);
