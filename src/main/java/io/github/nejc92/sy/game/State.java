@@ -68,6 +68,10 @@ public class State implements MctsDomainState<Action, Player> {
         playersOnBoard.printAllPositions();
     }
 
+    public void printSeekersPositions() {
+        playersOnBoard.printSeekersPositions();
+    }
+
     @Override
     public boolean isTerminal() {
         return seekersWon() || hiderWon();
@@ -233,7 +237,7 @@ public class State implements MctsDomainState<Action, Player> {
         }
     }
 
-    public void fixHidersProbablePosition() {
+    public void updateHidersProbablePosition() {
         playersOnBoard.fixHidersProbablePosition();
     }
 }

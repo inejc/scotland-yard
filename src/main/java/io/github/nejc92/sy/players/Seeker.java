@@ -9,7 +9,7 @@ public abstract class Seeker extends Player {
     private static final int UNDERGROUND_TICKETS = 4;
 
     public enum Color {
-        BLUE, YELLOW, RED, GREEN, BLACK
+        BLACK, BLUE, YELLOW, RED, GREEN
     }
 
     private final Color color;
