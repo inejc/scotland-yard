@@ -86,11 +86,6 @@ public class PlayersOnBoard {
         this.hidersMostProbablePosition = hidersMostProbablePosition;
     }
 
-
-    protected int[] getPlayersActualPositions() {
-        return playersActualPositions;
-    }
-
     public double hidersAverageDistanceToSeekers(Player.Type type) {
         int hidersPosition = playersActualPositions[HIDERS_INDEX];
         return Arrays.stream(playersActualPositions)
@@ -131,10 +126,6 @@ public class PlayersOnBoard {
         return anySeekerOnPosition(hidersMostProbablePositionPreviousRound);
     }
 
-//    protected boolean anySeekerOnHidersPreviousMostProbablePosition() {
-//        return anySeekerOnPosition(previousHidersMostProbablePosition);
-//    }
-
     protected boolean anySeekerOnHidersActualPosition() {
         return anySeekerOnPosition(playersActualPositions[HIDERS_INDEX]);
     }
@@ -148,10 +139,6 @@ public class PlayersOnBoard {
     protected boolean seekerOnHidersMostProbablePosition(Seeker seeker) {
         return seekerOnPosition(seeker, hidersMostProbablePositionPreviousRound);
     }
-
-//    protected boolean seekerOnHidersPreviousMostProbablePosition(Seeker seeker) {
-//        return seekerOnPosition(seeker, previousHidersMostProbablePosition);
-//    }
 
     protected boolean seekerOnHidersActualPosition(Seeker seeker) {
         return seekerOnPosition(seeker, playersActualPositions[HIDERS_INDEX]);
@@ -329,12 +316,6 @@ public class PlayersOnBoard {
     public void fixHidersProbablePosition() {
         hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
     }
-
-//    public int sumDistancesFromPositionToAllPossibleHidersPositions(int position) {
-//        return hidersPossiblePositions.stream()
-//                .mapToInt(possiblePosition -> board.shortestDistanceBetween(position, possiblePosition))
-//                .sum();
-//    }
 
     public int shortestDistanceBetweenPositionAndHidersMostProbablePosition(int position) {
         return board.shortestDistanceBetween(position, hidersMostProbablePosition, Player.Type.SEEKER);

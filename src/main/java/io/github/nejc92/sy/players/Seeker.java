@@ -19,10 +19,6 @@ public abstract class Seeker extends Player {
         this.color = color;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
     @Override
     public double getRewardFromTerminalState(State state) {
         if (state.seekerWon(this))

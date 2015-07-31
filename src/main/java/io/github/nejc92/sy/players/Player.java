@@ -92,7 +92,6 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
-        state.setSimulationOn();
         while (!state.isTerminal()) {
             Action randomAction;
             if (state.currentPlayerIsHider())
