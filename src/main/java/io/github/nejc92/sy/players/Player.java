@@ -93,13 +93,9 @@ public abstract class Player implements MctsDomainAgent<State> {
     @Override
     public final State getTerminalStateByPerformingSimulationFromState(State state) {
         while (!state.isTerminal()) {
-            Action randomAction;
-            if (state.currentPlayerIsHider())
-                randomAction = getHidersActionFromStatesAvailableActionsForSimulation(state);
-            else
-                randomAction = getSeekersActionFromStatesAvailableActionsForSimulation(state);
-            if (randomAction != null) {
-                state.performActionForCurrentAgent(randomAction);
+            Action action = getActionForCurrentPlayerType(state);
+            if (action != null) {
+                state.performActionForCurrentAgent(action);
             }
             else
                 state.skipCurrentAgent();
@@ -107,7 +103,14 @@ public abstract class Player implements MctsDomainAgent<State> {
         return state;
     }
 
-    protected abstract Action getHidersActionFromStatesAvailableActionsForSimulation(State state);
+    private Action getActionForCurrentPlayerType(State state) {
+        if (state.currentPlayerIsHider())
+            return getActionForHiderFromStatesAvailableActionsForSimulation(state);
+        else
+            return getActionForSeekerFromStatesAvailableActionsForSimulation(state);
+    }
 
-    protected abstract Action getSeekersActionFromStatesAvailableActionsForSimulation(State state);
+    protected abstract Action getActionForHiderFromStatesAvailableActionsForSimulation(State state);
+
+    protected abstract Action getActionForSeekerFromStatesAvailableActionsForSimulation(State state);
 }

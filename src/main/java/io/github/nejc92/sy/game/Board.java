@@ -65,6 +65,11 @@ public class Board {
     public int shortestDistanceBetween(int position1, int position2, Player.Type type) {
         if (position1 == position2)
             return 0;
+        else
+            return shortestDistanceBetweenDifferent(position1, position2, type);
+    }
+
+    public int shortestDistanceBetweenDifferent(int position1, int position2, Player.Type type) {
         int index1, index2;
         if (position1 < position2) {
             index1 = position1 - 1;

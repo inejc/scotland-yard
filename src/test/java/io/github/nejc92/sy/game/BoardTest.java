@@ -1,7 +1,5 @@
-package io.github.nejc92.sy.game.board;
+package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.game.Action;
-import io.github.nejc92.sy.game.Board;
 import io.github.nejc92.sy.players.Player;
 import org.junit.Test;
 

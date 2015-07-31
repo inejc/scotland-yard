@@ -148,7 +148,6 @@ public class State implements MctsDomainState<Action, Player> {
         return getAvailableActionsForCurrentAgent().contains(action);
     }
 
-
     public void skipAllSeekers() {
         currentPlayerIndex--;
         currentRound++;

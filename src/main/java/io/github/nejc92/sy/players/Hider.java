@@ -73,7 +73,8 @@ public abstract class Hider extends Player {
     }
 
     private boolean optimalToUseDoubleMoveCard(PlayersOnBoard playersOnBoard) {
-        return playersOnBoard.hidersAverageDistanceToSeekers(Type.SEEKER) <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
+        return playersOnBoard.hidersAverageDistanceToSeekers(Type.SEEKER)
+                <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
     }
 
     @Override
