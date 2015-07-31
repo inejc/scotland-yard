@@ -2,7 +2,7 @@ package io.github.nejc92.sy;
 
 import io.github.nejc92.mcts.Mcts;
 import io.github.nejc92.sy.game.Action;
-import io.github.nejc92.sy.game.board.Board;
+import io.github.nejc92.sy.game.Board;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.players.*;
 

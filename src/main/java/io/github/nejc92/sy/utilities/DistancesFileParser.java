@@ -72,8 +72,7 @@ public class DistancesFileParser extends DefaultHandler {
     @Override
     public void characters(char[] character, int start, int length) throws SAXException {
         if (isDistance) {
-            String stringData = new String(character, start, length);
-            int data = Integer.parseInt(stringData);
+            int data = Integer.parseInt(new String(character, start, length));
             greaterPositionPair.add(data);
             isDistance = false;
         }

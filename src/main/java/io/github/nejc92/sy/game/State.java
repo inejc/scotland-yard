@@ -1,7 +1,6 @@
 package io.github.nejc92.sy.game;
 
 import io.github.nejc92.mcts.MctsDomainState;
-import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 import io.github.nejc92.sy.players.Seeker;
@@ -19,7 +18,7 @@ public class State implements MctsDomainState<Action, Player> {
     private int currentRound;
     private int currentPlayerIndex;
     private int previousPlayerIndex;
-    private Connection.Transportation lastHidersTransportation;
+    private Action.Transportation lastHidersTransportation;
     private boolean inSearch;
     private boolean searchInvokingPlayerIsHider;
     private boolean inSimulation;
@@ -237,7 +236,7 @@ public class State implements MctsDomainState<Action, Player> {
         return currentPlayerIndex == numberOfPlayers - 1;
     }
 
-    private void setHidersMostProbablePosition(Connection.Transportation transportation) {
+    private void setHidersMostProbablePosition(Action.Transportation transportation) {
         if (currentPlayerIsHider()) {
             if (isHiderSurfacesRound())
                 playersOnBoard.setHidersActualAsMostProbablePosition();

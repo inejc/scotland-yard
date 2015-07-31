@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 public class DistancesFileParserTest {
 
-    private static final String FILE_NAME = "src/main/resources/distances_file.xml";
+    private static final String FILE_NAME = "src/main/resources/hiders_distances_file.xml";
 
     DistancesFileParser distancesFileParser;
 

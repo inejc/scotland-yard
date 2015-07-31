@@ -1,7 +1,6 @@
 package io.github.nejc92.sy.utilities;
 
 import io.github.nejc92.sy.game.Action;
-import io.github.nejc92.sy.game.board.Connection;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -18,7 +17,7 @@ public class BoardFileParser extends DefaultHandler {
     private final String fileName;
     private List<List<Action>> boardPositions;
     private List<Action> temporaryPosition;
-    private Connection.Transportation temporaryTransportation;
+    private Action.Transportation temporaryTransportation;
     private int temporaryDestination;
     private boolean isTransportation;
     private boolean isDestination;
@@ -92,21 +91,21 @@ public class BoardFileParser extends DefaultHandler {
         }
     }
 
-    private Connection.Transportation charactersToTransportation(char[] characters, int start, int length) {
+    private Action.Transportation charactersToTransportation(char[] characters, int start, int length) {
         String dataString = new String(characters, start, length);
         return tryToCreateTransportationFromString(dataString);
     }
 
-    private Connection.Transportation tryToCreateTransportationFromString(String string) {
+    private Action.Transportation tryToCreateTransportationFromString(String string) {
         switch (string) {
             case "taxi":
-                return Connection.Transportation.TAXI;
+                return Action.Transportation.TAXI;
             case "bus":
-                return Connection.Transportation.BUS;
+                return Action.Transportation.BUS;
             case "underground":
-                return Connection.Transportation.UNDERGROUND;
+                return Action.Transportation.UNDERGROUND;
             case "boat":
-                return Connection.Transportation.BLACK_FARE;
+                return Action.Transportation.BLACK_FARE;
             default:
                 throw new IllegalStateException("Error: invalid transportation data in board file.");
         }

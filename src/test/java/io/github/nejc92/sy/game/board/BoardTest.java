@@ -1,6 +1,8 @@
 package io.github.nejc92.sy.game.board;
 
 import io.github.nejc92.sy.game.Action;
+import io.github.nejc92.sy.game.Board;
+import io.github.nejc92.sy.players.Player;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,21 +21,21 @@ public class BoardTest {
             Arrays.asList(146, 177));
 
     private static final List<Action> ACTIONS_157 = new ArrayList<>(Arrays.asList(
-            new Action(Connection.Transportation.TAXI, 156),
-            new Action(Connection.Transportation.TAXI, 158),
-            new Action(Connection.Transportation.TAXI, 170),
-            new Action(Connection.Transportation.BUS, 156),
-            new Action(Connection.Transportation.BUS, 133),
-            new Action(Connection.Transportation.BUS, 142),
-            new Action(Connection.Transportation.BUS, 185),
-            new Action(Connection.Transportation.BLACK_FARE, 115),
-            new Action(Connection.Transportation.BLACK_FARE, 194)));
+            new Action(Action.Transportation.TAXI, 156),
+            new Action(Action.Transportation.TAXI, 158),
+            new Action(Action.Transportation.TAXI, 170),
+            new Action(Action.Transportation.BUS, 156),
+            new Action(Action.Transportation.BUS, 133),
+            new Action(Action.Transportation.BUS, 142),
+            new Action(Action.Transportation.BUS, 185),
+            new Action(Action.Transportation.BLACK_FARE, 115),
+            new Action(Action.Transportation.BLACK_FARE, 194)));
 
     private static final List<Action> ACTIONS_157_BUS = new ArrayList<>(Arrays.asList(
-            new Action(Connection.Transportation.BUS, 156),
-            new Action(Connection.Transportation.BUS, 133),
-            new Action(Connection.Transportation.BUS, 142),
-            new Action(Connection.Transportation.BUS, 185)));
+            new Action(Action.Transportation.BUS, 156),
+            new Action(Action.Transportation.BUS, 133),
+            new Action(Action.Transportation.BUS, 142),
+            new Action(Action.Transportation.BUS, 185)));
 
     private Board board = Board.initialize();
 
@@ -52,23 +54,23 @@ public class BoardTest {
     @Test
     public void testGetTransportationDestinationsForPosition() {
         List<Integer> destinations = board.getTransportationDestinationsForPosition(
-                Connection.Transportation.TAXI, 163);
+                Action.Transportation.TAXI, 163);
         assertEquals(DESTINATIONS_163_TAXI, destinations);
     }
 
     @Test
     public void testGetTransportationActionsForPosition() {
-        List<Action> actions = board.getTransportationActionsForPosition(Connection.Transportation.BUS, 157);
+        List<Action> actions = board.getTransportationActionsForPosition(Action.Transportation.BUS, 157);
         assertEquals(ACTIONS_157_BUS, actions);
     }
 
     @Test
     public void testShortestDistanceBetween() {
-        int shortestDistance = board.shortestDistanceBetween(66, 124);
+        int shortestDistance = board.shortestDistanceBetween(66, 124, Player.Type.HIDER);
         assertEquals(3, shortestDistance);
-        shortestDistance = board.shortestDistanceBetween(189, 163);
+        shortestDistance = board.shortestDistanceBetween(189, 163, Player.Type.HIDER);
         assertEquals(2, shortestDistance);
-        shortestDistance = board.shortestDistanceBetween(130, 63);
+        shortestDistance = board.shortestDistanceBetween(130, 63, Player.Type.HIDER);
         assertEquals(4, shortestDistance);
     }
 }

@@ -1,18 +1,20 @@
 package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.game.board.Connection;
-
 public class Action {
 
-    private final Connection.Transportation transportation;
+    public enum Transportation {
+        TAXI, BUS, UNDERGROUND, BLACK_FARE
+    }
+
+    private final Transportation transportation;
     private final int destination;
 
-    public Action(Connection.Transportation transportation, int destination) {
+    public Action(Transportation transportation, int destination) {
         this.transportation = transportation;
         this.destination = destination;
     }
 
-    public Connection.Transportation getTransportation() {
+    public Transportation getTransportation() {
         return transportation;
     }
 
@@ -20,12 +22,12 @@ public class Action {
         return destination;
     }
 
-    public boolean isTransportationAction(Connection.Transportation transportation) {
+    public boolean isTransportationAction(Transportation transportation) {
         return this.transportation == transportation;
     }
 
     protected Action generateBlackFareAction() {
-        return new Action(Connection.Transportation.BLACK_FARE, this.destination);
+        return new Action(Transportation.BLACK_FARE, this.destination);
     }
 
     @Override

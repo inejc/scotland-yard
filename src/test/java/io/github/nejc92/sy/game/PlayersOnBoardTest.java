@@ -1,6 +1,5 @@
 package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Player;
 import io.github.nejc92.sy.players.RandomHider;
 import io.github.nejc92.sy.players.RandomSeeker;
@@ -66,32 +65,32 @@ public class PlayersOnBoardTest {
 //    @Test
 //    public void testSeekerOnHidersMostProbablePosition() {
 //        assertFalse(playersOnBoard.anySeekerOnHidersMostProbablePosition());
-//        playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 103));
+//        playersOnBoard.movePlayerFromActualPosition(2, new Action(Action.Transportation.TAXI, 103));
 //        assertTrue(playersOnBoard.anySeekerOnHidersMostProbablePosition());
 //    }
 
     @Test
     public void testSeekerOnHidersActualPosition() {
         assertFalse(playersOnBoard.anySeekerOnHidersActualPosition());
-        playersOnBoard.movePlayerFromActualPosition(2, new Action(Connection.Transportation.TAXI, 34));
+        playersOnBoard.movePlayerFromActualPosition(2, new Action(Action.Transportation.TAXI, 34));
         assertTrue(playersOnBoard.anySeekerOnHidersActualPosition());
     }
 
     @Test
     public void testGetAvailableActionsFromSeekersPov() {
         List<Action> availableActions = new ArrayList<>(Arrays.asList(
-                new Action(Connection.Transportation.TAXI, 85),
-                new Action(Connection.Transportation.TAXI, 86),
-                new Action(Connection.Transportation.TAXI, 102)
+                new Action(Action.Transportation.TAXI, 85),
+                new Action(Action.Transportation.TAXI, 86),
+                new Action(Action.Transportation.TAXI, 102)
         ));
         assertEquals(availableActions, playersOnBoard.getAvailableActionsFromSeekersPov(0));
         availableActions = new ArrayList<>(Arrays.asList(
-                new Action(Connection.Transportation.TAXI, 75),
-                new Action(Connection.Transportation.TAXI, 93),
-                new Action(Connection.Transportation.TAXI, 95),
-                new Action(Connection.Transportation.BUS, 74),
-                new Action(Connection.Transportation.BUS, 77),
-                new Action(Connection.Transportation.BUS, 93)
+                new Action(Action.Transportation.TAXI, 75),
+                new Action(Action.Transportation.TAXI, 93),
+                new Action(Action.Transportation.TAXI, 95),
+                new Action(Action.Transportation.BUS, 74),
+                new Action(Action.Transportation.BUS, 77),
+                new Action(Action.Transportation.BUS, 93)
         ));
         assertEquals(availableActions, playersOnBoard.getAvailableActionsFromSeekersPov(1));
     }

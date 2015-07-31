@@ -1,7 +1,5 @@
 package io.github.nejc92.sy.game;
 
-import io.github.nejc92.sy.game.board.Board;
-import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.players.Hider;
 import io.github.nejc92.sy.players.Player;
 import io.github.nejc92.sy.players.Seeker;
@@ -93,11 +91,11 @@ public class PlayersOnBoard {
         return playersActualPositions;
     }
 
-    public double hidersAverageDistanceToSeekers() {
+    public double hidersAverageDistanceToSeekers(Player.Type type) {
         int hidersPosition = playersActualPositions[HIDERS_INDEX];
         return Arrays.stream(playersActualPositions)
                 .skip(SKIP_HIDER)
-                .map(position -> board.shortestDistanceBetween(hidersPosition, position))
+                .map(position -> board.shortestDistanceBetween(hidersPosition, position, type))
                 .average().getAsDouble();
     }
 
@@ -187,7 +185,7 @@ public class PlayersOnBoard {
         availableActions = removeActionsWithOccupiedDestinations(availableActions);
         availableActions = removeActionsBecauseOfNoPlayersTickets(availableActions, playerIndex);
         if (!playerIsHider(playerIndex))
-            availableActions = removeTransportationActions(Connection.Transportation.BLACK_FARE, availableActions);
+            availableActions = removeTransportationActions(Action.Transportation.BLACK_FARE, availableActions);
         else
             availableActions = fixHidersBlackFareActions((Hider) players[playerIndex], availableActions);
         return availableActions;
@@ -208,21 +206,21 @@ public class PlayersOnBoard {
     private List<Action> removeActionsBecauseOfNoPlayersTickets(List<Action> actions, int playerIndex) {
         Player player = players[playerIndex];
         if (!player.hasTaxiTickets())
-            actions = removeTransportationActions(Connection.Transportation.TAXI, actions);
+            actions = removeTransportationActions(Action.Transportation.TAXI, actions);
         if (!player.hasBusTickets())
-            actions = removeTransportationActions(Connection.Transportation.BUS, actions);
+            actions = removeTransportationActions(Action.Transportation.BUS, actions);
         if (!player.hasUndergroundTickets())
-            actions = removeTransportationActions(Connection.Transportation.UNDERGROUND, actions);
+            actions = removeTransportationActions(Action.Transportation.UNDERGROUND, actions);
         return actions;
     }
 
     private List<Action> fixHidersBlackFareActions(Hider hider, List<Action> actions) {
         if (!hider.hasBlackFareTicket())
-            actions = removeTransportationActions(Connection.Transportation.BLACK_FARE, actions);
+            actions = removeTransportationActions(Action.Transportation.BLACK_FARE, actions);
         return actions;
     }
 
-    private List<Action> removeTransportationActions(Connection.Transportation transportation, List<Action> actions) {
+    private List<Action> removeTransportationActions(Action.Transportation transportation, List<Action> actions) {
         return actions.stream()
                 .filter(action -> !action.isTransportationAction(transportation))
                 .collect(Collectors.toList());
@@ -242,7 +240,7 @@ public class PlayersOnBoard {
     }
 
     private void removeTransportationCard(int playerIndex, Action action) {
-        if (playerIsHider(playerIndex) && action.isTransportationAction(Connection.Transportation.BLACK_FARE)) {
+        if (playerIsHider(playerIndex) && action.isTransportationAction(Action.Transportation.BLACK_FARE)) {
             Hider hider = (Hider)getPlayerAtIndex(HIDERS_INDEX);
             hider.removeBlackFareTicket();
         }
@@ -261,7 +259,7 @@ public class PlayersOnBoard {
         hidersMostProbablePosition = playersActualPositions[HIDERS_INDEX];
     }
 
-    protected void recalculateHidersMostProbablePosition(Connection.Transportation transportation) {
+    protected void recalculateHidersMostProbablePosition(Action.Transportation transportation) {
         hidersPossiblePositions = recalculateHidersPossiblePositions(transportation);
         hidersMostProbablePositionPreviousRound = hidersMostProbablePosition;
         hidersMostProbablePosition = getMostProbableHidersPosition();
@@ -273,10 +271,10 @@ public class PlayersOnBoard {
         hidersMostProbablePosition = getMostProbableHidersPosition();
     }
 
-    private List<Integer> recalculateHidersPossiblePositions(Connection.Transportation transportation) {
+    private List<Integer> recalculateHidersPossiblePositions(Action.Transportation transportation) {
         List<Integer> newHidersPossiblePositions = new ArrayList<>();
         for (int position : hidersPossiblePositions) {
-            if (transportation == Connection.Transportation.BLACK_FARE)
+            if (transportation == Action.Transportation.BLACK_FARE)
                 newHidersPossiblePositions.addAll(board.getDestinationsForPosition(position));
             else {
                 newHidersPossiblePositions.addAll(
@@ -305,8 +303,8 @@ public class PlayersOnBoard {
         for (int i = 0; i < hidersPossiblePositions.size(); i++) {
             int position = hidersPossiblePositions.get(i);
             int minDistance = seekersPositions.stream().min(((position1, position2) -> Integer.compare(
-                    board.shortestDistanceBetween(position1, position),
-                    board.shortestDistanceBetween(position2, position)))).get();
+                    board.shortestDistanceBetween(position1, position, Player.Type.HIDER),
+                    board.shortestDistanceBetween(position2, position, Player.Type.HIDER)))).get();
             int probabilityIndex = minDistance - 1;
             if (probabilityIndex > 4)
                 probabilityIndex = 4;
@@ -339,12 +337,12 @@ public class PlayersOnBoard {
 //    }
 
     public int shortestDistanceBetweenPositionAndHidersMostProbablePosition(int position) {
-        return board.shortestDistanceBetween(position, hidersMostProbablePosition);
+        return board.shortestDistanceBetween(position, hidersMostProbablePosition, Player.Type.SEEKER);
     }
 
     public int shortestDistanceBetweenPositionAndClosestSeeker(int position) {
         return getSeekersPositions(playersActualPositions).stream()
-                .map(seekersPosition -> board.shortestDistanceBetween(position, seekersPosition))
+                .map(seekersPosition -> board.shortestDistanceBetween(position, seekersPosition, Player.Type.HIDER))
                 .min(Integer::compare).get();
     }
 }

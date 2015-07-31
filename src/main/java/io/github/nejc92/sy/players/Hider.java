@@ -2,7 +2,6 @@ package io.github.nejc92.sy.players;
 
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.PlayersOnBoard;
-import io.github.nejc92.sy.game.board.Connection;
 import io.github.nejc92.sy.game.State;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public abstract class Hider extends Player {
     }
 
     @Override
-    public void addTicket(Connection.Transportation transportation) {
+    public void addTicket(Action.Transportation transportation) {
         super.addTicket(transportation);
     }
 
@@ -66,7 +65,7 @@ public abstract class Hider extends Player {
     }
 
     private boolean actionsContainOnlyTaxis(List<Action> actions) {
-        return actions.stream().allMatch(action -> action.isTransportationAction(Connection.Transportation.TAXI));
+        return actions.stream().allMatch(action -> action.isTransportationAction(Action.Transportation.TAXI));
     }
 
     public boolean shouldUseDoubleMove(PlayersOnBoard playersOnBoard) {
@@ -74,7 +73,7 @@ public abstract class Hider extends Player {
     }
 
     private boolean optimalToUseDoubleMoveCard(PlayersOnBoard playersOnBoard) {
-        return playersOnBoard.hidersAverageDistanceToSeekers() <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
+        return playersOnBoard.hidersAverageDistanceToSeekers(Type.SEEKER) <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
     }
 
     @Override
