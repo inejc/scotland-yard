@@ -110,20 +110,9 @@ public class PlayersOnBoard {
         return players[playerIndex];
     }
 
-    public void printAllPositions() {
+    public void printPlayers(int start) {
         System.out.println("Players:");
-        for (int i = 0; i < players.length; i++) {
-            System.out.println(players[i] + " on " + playersActualPositions[i] +
-                    " (taxi tickets: " + players[i].getTaxiTickets() +
-                    ", bus tickets: " + players[i].getBusTickets() +
-                    ", underground tickets: " + players[i].getUndergroundTickets() + ") ");
-        }
-        System.out.println();
-    }
-
-    public void printSeekersPositions() {
-        System.out.println("Seekers:");
-        for (int i = 1; i < players.length; i++) {
+        for (int i = start; i < players.length; i++) {
             System.out.println(players[i] + " on " + playersActualPositions[i] +
                     " (taxi tickets: " + players[i].getTaxiTickets() +
                     ", bus tickets: " + players[i].getBusTickets() +

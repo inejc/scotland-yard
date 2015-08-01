@@ -34,15 +34,11 @@ public class ScotlandYard {
 
     private static void printWelcomeText() {
         System.out.println("----------------------------------------------------------------------------------------");
-        for (int i = 0; i < 2; i++) {
-            if (i == 1)
-                System.out.println(
-                        "|                SCOTLAND YARD BOARD GAME - MONTE CARLO TREE SEARCH                    |");
-            System.out.println(
-                    "|                                                                                      |");
-        }
+        System.out.println("|                SCOTLAND YARD BOARD GAME - MONTE CARLO TREE SEARCH                    |");
+        System.out.println("|                                                                                      |");
         System.out.println("----------------------------------------------------------------------------------------");
-        System.out.println("Welcome to the Scotland Yard Board Game with Monte Carlo Tree Search AI players.\n");
+        System.out.println("    1" +
+                "Welcome to the Scotland Yard Board Game with Monte Carlo Tree Search AI players.\n");
     }
 
     private static Mcts<State, Action, Player> initializeSearch() {
