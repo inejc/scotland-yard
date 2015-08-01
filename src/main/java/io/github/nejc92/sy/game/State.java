@@ -92,7 +92,7 @@ public class State implements MctsDomainState<Action, Player> {
         }
     }
 
-    private boolean isHiderSurfacesRound() {
+    public boolean isHiderSurfacesRound() {
         return HIDER_SURFACES_ROUNDS.contains(currentRound);
     }
 

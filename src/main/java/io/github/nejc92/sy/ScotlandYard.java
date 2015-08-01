@@ -134,7 +134,7 @@ public class ScotlandYard {
         updateHidersMostProbablePosition(state);
         double explorationParameter = getAppropriateExplorationParameter(state);
         mostPromisingAction = mcts.uctSearchWithExploration(state, explorationParameter);
-        printSelectedAction(mostPromisingAction);
+        printSelectedAction(state, mostPromisingAction);
         state.setSearchModeOff();
         return mostPromisingAction;
     }
@@ -151,8 +151,11 @@ public class ScotlandYard {
             return SEEKERS_EXPLORATION;
     }
 
-    private static void printSelectedAction(Action action) {
-        System.out.println(action + "\n");
+    private static void printSelectedAction(State state, Action action) {
+        if (humanType == Player.Type.HIDER || state.isHiderSurfacesRound())
+            System.out.println(action + "\n");
+        else
+            System.out.println(action.getTransportation() + "\n");
     }
 
     private static void askHumanForDoubleMove(State state, Scanner scanner) {
