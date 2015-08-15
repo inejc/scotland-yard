@@ -12,11 +12,11 @@ public class BiasedHider extends Hider {
 
     @Override
     protected Action getActionForHiderFromStatesAvailableActionsForSimulation(State state) {
-        return BiasedPlayout.getBiasedActionForHider(state);
+        return BiasedPlayout.getGreedyBiasedActionForHider(state);
     }
 
     @Override
     protected Action getActionForSeekerFromStatesAvailableActionsForSimulation(State state) {
-        return BiasedPlayout.getBiasedActionForSeeker(state);
+        return BiasedPlayout.getGreedyBiasedActionForSeeker(state);
     }
 }

@@ -11,13 +11,18 @@ import java.util.Scanner;
 
 public class ScotlandYard {
 
-    private static final int MCTS_ITERATIONS = 10000;
+    private static final int MCTS_ITERATIONS = 7000;
     private static final double HIDERS_EXPLORATION = 0.2;
     private static final double SEEKERS_EXPLORATION = 2;
+    private static final int NUMBER_OF_PLAYERS = 6;
     private static final int HUMAN_AS_HIDER = 1;
     private static final int HUMAN_AS_SEEKERS = 2;
+    private static final int TEST_PLAYERS = 3;
 
     private static Player.Type humanType;
+    private static int numberOfGames = 1;
+    private static int numberOfSeekersWins = 0;
+    private static int numberOfHidersWins = 0;
 
     public static void main(String... args) {
         printWelcomeText();
@@ -25,11 +30,10 @@ public class ScotlandYard {
         Mcts<State, Action, Player> mcts = initializeSearch();
         setHumanPlayer(scanner);
         Player[] players = initializePlayers(humanType);
-        State state = State.initialize(players);
-        while (!state.isTerminal()) {
-            performOneAction(state, mcts, scanner);
-        }
-        printResult(state);
+        for (int i = 0; i < numberOfGames; i++)
+            playOneGame(mcts, players, scanner);
+        System.out.println("Number of seeker's wins: " + numberOfSeekersWins
+                + ", number of hider's wins: " + numberOfHidersWins);
     }
 
     private static void printWelcomeText() {
@@ -37,7 +41,7 @@ public class ScotlandYard {
         System.out.println("|                SCOTLAND YARD BOARD GAME - MONTE CARLO TREE SEARCH                    |");
         System.out.println("|                                                                                      |");
         System.out.println("----------------------------------------------------------------------------------------");
-        System.out.println("    1" +
+        System.out.println("    " +
                 "Welcome to the Scotland Yard Board Game with Monte Carlo Tree Search AI players.\n");
     }
 
@@ -52,32 +56,53 @@ public class ScotlandYard {
         int humanInput = Integer.parseInt(scanner.nextLine());
         if (humanInput == HUMAN_AS_HIDER)
             humanType = Player.Type.HIDER;
-        else
+        else if (humanInput == HUMAN_AS_SEEKERS)
             humanType =  Player.Type.SEEKER;
+        else {
+            humanType = null;
+            printSelectNumberOfGamesInstructions();
+            numberOfGames = Integer.parseInt(scanner.nextLine());
+        }
     }
 
     private static void printSelectPlayerInstructions() {
         System.out.print("To play as a hider enter " + HUMAN_AS_HIDER
-                + "\nTo play as seekers enter " + HUMAN_AS_SEEKERS + "\nSelect player:\n");
+                + "\nTo play as seekers enter " + HUMAN_AS_SEEKERS
+                + "\nTo test players enter " + TEST_PLAYERS + "\nSelect player:\n");
+    }
+
+    private static void printSelectNumberOfGamesInstructions() {
+        System.out.print("How many games should be played?\nEnter number of games:\n");
     }
 
     private static Player[] initializePlayers(Player.Type humanType) {
         if (humanType == Player.Type.HIDER)
             return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.COMPUTER);
-        else
+        else if (humanType == Player.Type.SEEKER)
             return initializePlayersWithOperator(Player.Operator.COMPUTER, Player.Operator.HUMAN);
+        else
+            return initializePlayersWithOperator(Player.Operator.COMPUTER, Player.Operator.COMPUTER);
     }
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
-        Player[] players = new Player[6];
+        Player[] players = new Player[NUMBER_OF_PLAYERS];
         players[0] = new BiasedHider(hider);
         for (int i = 1; i < players.length; i++)
             players[i] = new BiasedSeeker(seeker, Seeker.Color.values()[i-1]);
         return players;
     }
 
+    private static void playOneGame(Mcts<State, Action, Player> mcts, Player[] players, Scanner scanner) {
+        State state = State.initialize(players);
+        while (!state.isTerminal()) {
+            performOneAction(state, mcts, scanner);
+        }
+        saveAndPrintResult(state);
+    }
+
     private static void performOneAction(State state, Mcts<State, Action, Player> mcts, Scanner scanner) {
-        printBeforeMove(state);
+        if (shouldPrintGameStateInfo())
+            printBeforeMove(state);
         if (currentPlayerCanMove(state)) {
             Action mostPromisingAction = getNextAction(state, mcts, scanner);
             state.performActionForCurrentAgent(mostPromisingAction);
@@ -134,9 +159,14 @@ public class ScotlandYard {
         updateHidersMostProbablePosition(state);
         double explorationParameter = getAppropriateExplorationParameter(state);
         mostPromisingAction = mcts.uctSearchWithExploration(state, explorationParameter);
-        printSelectedAction(state, mostPromisingAction);
+        if (shouldPrintGameStateInfo())
+            printSelectedAction(state, mostPromisingAction);
         state.setSearchModeOff();
         return mostPromisingAction;
+    }
+
+    private static boolean shouldPrintGameStateInfo() {
+        return humanType != null;
     }
 
     private static void updateHidersMostProbablePosition(State state) {
@@ -179,10 +209,14 @@ public class ScotlandYard {
         return state.previousPlayerIsHider() && state.previousPlayerIsHuman();
     }
 
-    private static void printResult(State state) {
-        if (state.seekersWon())
+    private static void saveAndPrintResult(State state) {
+        if (state.seekersWon()) {
+            numberOfSeekersWins++;
             System.out.println("Seekers won!");
-        else
+        }
+        else {
+            numberOfHidersWins++;
             System.out.println("Hider won!");
+        }
     }
 }

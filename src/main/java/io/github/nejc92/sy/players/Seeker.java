@@ -7,6 +7,7 @@ public abstract class Seeker extends Player {
     private static final int TAXI_TICKETS = 10;
     private static final int BUS_TICKETS = 8;
     private static final int UNDERGROUND_TICKETS = 4;
+    private static final double COALITION_REDUCTION_PARAMETER = 0.25;
 
     public enum Color {
         BLACK, BLUE, YELLOW, RED, GREEN
@@ -24,7 +25,7 @@ public abstract class Seeker extends Player {
         if (state.seekerWon(this))
             return 1;
         else if (state.seekersWon())
-            return 0.75;
+            return 1 - COALITION_REDUCTION_PARAMETER;
         else
             return 0;
     }
