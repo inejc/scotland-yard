@@ -4,7 +4,7 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.playouts.BiasedPlayout;
 
-public class BiasedHider extends Hider {
+public abstract class BiasedHider extends Hider {
 
     public BiasedHider(Operator operator) {
         super(operator);

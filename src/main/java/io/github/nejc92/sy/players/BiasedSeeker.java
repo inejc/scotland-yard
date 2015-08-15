@@ -4,7 +4,7 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.playouts.BiasedPlayout;
 
-public class BiasedSeeker extends Seeker {
+public abstract class BiasedSeeker extends Seeker {
 
     public BiasedSeeker(Operator operator, Seeker.Color color) {
         super(operator, color);

@@ -4,7 +4,7 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.playouts.RandomPlayout;
 
-public class RandomHider extends Hider {
+public abstract class RandomHider extends Hider {
 
     public RandomHider(Operator operator) {
         super(operator);

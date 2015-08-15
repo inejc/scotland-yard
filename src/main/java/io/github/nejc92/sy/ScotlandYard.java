@@ -86,9 +86,9 @@ public class ScotlandYard {
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
         Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new BiasedHider(hider);
+        players[0] = new BiasedHiderMoveFiltering(hider);
         for (int i = 1; i < players.length; i++)
-            players[i] = new BiasedSeeker(seeker, Seeker.Color.values()[i-1]);
+            players[i] = new BiasedSeekerCoalitionReduction(seeker, Seeker.Color.values()[i-1]);
         return players;
     }
 
