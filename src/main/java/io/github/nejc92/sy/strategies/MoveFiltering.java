@@ -34,11 +34,11 @@ public class MoveFiltering {
                 <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
     }
 
-    public static boolean shouldUseDoubleMoveGreedy() {
+    public static boolean shouldUseDoubleMoveCardGreedy() {
         return Math.random() < SHOULD_USE_DOUBLE_MOVE_GREEDY_THRESHOLD;
     }
 
-    public static boolean shouldUseBlackFareGreedy() {
+    public static boolean shouldUseBlackFareTicketGreedy() {
         return Math.random() < SHOULD_USE_BLACK_FARE_TICKET_GREEDY_THRESHOLD;
     }
 }

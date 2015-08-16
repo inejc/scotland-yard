@@ -76,7 +76,7 @@ public class Hider extends Player {
         if (searchInvokingPlayerUsesMoveFiltering)
             return hasBlackFareTicket() && MoveFiltering.optimalToUseBlackFareTicket(currentRound, actions);
         else
-            return hasBlackFareTicket() && MoveFiltering.shouldUseBlackFareGreedy();
+            return hasBlackFareTicket() && MoveFiltering.shouldUseBlackFareTicketGreedy();
     }
 
     public boolean shouldUseDoubleMove(PlayersOnBoard playersOnBoard,
@@ -84,7 +84,7 @@ public class Hider extends Player {
         if (searchInvokingPlayerUsesMoveFiltering)
             return hasDoubleMoveCard() && MoveFiltering.optimalToUseDoubleMoveCard(playersOnBoard);
         else
-            return hasDoubleMoveCard() && MoveFiltering.shouldUseDoubleMoveGreedy();
+            return hasDoubleMoveCard() && MoveFiltering.shouldUseDoubleMoveCardGreedy();
     }
 
     @Override
