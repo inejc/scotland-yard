@@ -18,6 +18,8 @@ public class MoveFiltering {
             Arrays.asList(1, 2, 3, 8, 13, 18, 24)
     );
     private static final double SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD = 3;
+    private static final double SHOULD_USE_DOUBLE_MOVE_GREEDY_THRESHOLD = 0.1;
+    private static final double SHOULD_USE_BLACK_FARE_TICKET_GREEDY_THRESHOLD = 0.3;
 
     public static boolean optimalToUseBlackFareTicket(int currentRound, List<Action> actions) {
         return !SHOULDNT_USE_BLACK_FAIR_ROUNDS.contains(currentRound) && !actionsContainOnlyTaxis(actions);
@@ -30,5 +32,13 @@ public class MoveFiltering {
     public static boolean optimalToUseDoubleMoveCard(PlayersOnBoard playersOnBoard) {
         return playersOnBoard.hidersAverageDistanceToSeekers(Player.Type.SEEKER)
                 <= SHOULD_USE_DOUBLE_MOVE_AVG_DISTANCE_THRESHOLD;
+    }
+
+    public static boolean shouldUseDoubleMoveGreedy() {
+        return Math.random() < SHOULD_USE_DOUBLE_MOVE_GREEDY_THRESHOLD;
+    }
+
+    public static boolean shouldUseBlackFareGreedy() {
+        return Math.random() < SHOULD_USE_BLACK_FARE_TICKET_GREEDY_THRESHOLD;
     }
 }
