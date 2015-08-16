@@ -23,6 +23,8 @@ public class State implements MctsDomainState<Action, Player> {
     private Action.Transportation lastHidersTransportation;
     private boolean inSearch;
     private boolean searchInvokingPlayerIsHider;
+    private boolean searchInvokingPlayerUsesCoalitionReduction;
+    private boolean searchInvokingPlayerUsesMoveFiltering;
 
     public static State initialize(Player[] players) {
         PlayersOnBoard playersOnBoard = PlayersOnBoard.initialize(players);
@@ -57,6 +59,12 @@ public class State implements MctsDomainState<Action, Player> {
     public void setSearchModeOn() {
         inSearch = true;
         searchInvokingPlayerIsHider = playersOnBoard.playerIsHider(currentPlayerIndex);
+        searchInvokingPlayerUsesCoalitionReduction = playersOnBoard.playerUsesCoalitionReduction(currentPlayerIndex);
+        searchInvokingPlayerUsesMoveFiltering = playersOnBoard.playerUsesMoveFiltering(currentPlayerIndex);
+    }
+
+    public boolean searchInvokingPlayerUsesCoalitionReduction() {
+        return searchInvokingPlayerUsesCoalitionReduction;
     }
 
     public void setSearchModeOff() {
@@ -161,7 +169,7 @@ public class State implements MctsDomainState<Action, Player> {
     private void  performDoubleMoveIfShould() {
         if (shouldCheckForHidersDoubleMoveAutomatically()) {
             Hider hider = (Hider)getPreviousAgent();
-            if (hider.shouldUseDoubleMove(playersOnBoard)) {
+            if (hider.shouldUseDoubleMove(playersOnBoard, searchInvokingPlayerUsesMoveFiltering)) {
                 skipAllSeekers();
                 hider.removeDoubleMoveCard();
             }
@@ -222,7 +230,7 @@ public class State implements MctsDomainState<Action, Player> {
     }
 
     List<Action> addBlackFareActionsForHiderIfOptimal(Hider hider, List<Action> actions) {
-        if (hider.shouldUseBlackfareTicket(currentRound, actions))
+        if (hider.shouldUseBlackfareTicket(currentRound, actions, searchInvokingPlayerUsesMoveFiltering))
             return addBlackFareActions(actions);
         return actions;
     }

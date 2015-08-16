@@ -106,6 +106,14 @@ public class PlayersOnBoard {
         return getPlayerAtIndex(playerIndex).isHuman();
     }
 
+    protected boolean playerUsesCoalitionReduction(int playerIndex) {
+        return getPlayerAtIndex(playerIndex).usesCoalitionReduction();
+    }
+
+    protected boolean playerUsesMoveFiltering(int playerIndex) {
+        return getPlayerAtIndex(playerIndex).usesMoveFiltering();
+    }
+
     protected Player getPlayerAtIndex(int playerIndex) {
         return players[playerIndex];
     }

@@ -1,14 +1,28 @@
-package io.github.nejc92.sy.playouts;
+package io.github.nejc92.sy.strategies;
 
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.PlayersOnBoard;
 import io.github.nejc92.sy.game.State;
 
+import java.util.Collections;
 import java.util.List;
 
-public class BiasedPlayout {
+public class Playouts {
+
+    public enum Uses {
+        RANDOM, BIASED
+    }
 
     private static final double EPSILON = 0.2;
+
+    public static Action getRandomAction(State state) {
+        List<Action> availableActions = state.getAvailableActionsForCurrentAgent();
+        Collections.shuffle(availableActions);
+        if (availableActions.size() > 0)
+            return availableActions.get(0);
+        else
+            return null;
+    }
 
     public static Action getGreedyBiasedActionForHider(State state) {
         List<Action> actions = state.getAvailableActionsForCurrentAgent();
@@ -16,7 +30,7 @@ public class BiasedPlayout {
             if (shouldReturnBiasedAction())
                 return getBiasedActionForHiderConfidently(actions, state.getPlayersOnBoard());
             else
-                return RandomPlayout.getRandomAction(state);
+                return getRandomAction(state);
         }
         else
             return null;
@@ -28,7 +42,7 @@ public class BiasedPlayout {
             if (shouldReturnBiasedAction())
                 return getBiasedActionForSeekerConfidently(actions, state.getPlayersOnBoard());
             else
-                return RandomPlayout.getRandomAction(state);
+                return getRandomAction(state);
         }
         else
             return null;

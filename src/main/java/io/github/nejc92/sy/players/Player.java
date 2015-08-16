@@ -3,6 +3,9 @@ package io.github.nejc92.sy.players;
 import io.github.nejc92.mcts.MctsDomainAgent;
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.State;
+import io.github.nejc92.sy.strategies.CoalitionReduction;
+import io.github.nejc92.sy.strategies.MoveFiltering;
+import io.github.nejc92.sy.strategies.Playouts;
 
 public abstract class Player implements MctsDomainAgent<State> {
 
@@ -19,13 +22,21 @@ public abstract class Player implements MctsDomainAgent<State> {
     private int taxiTickets;
     private int busTickets;
     private int undergroundTickets;
+    private final Playouts.Uses playout;
+    private final CoalitionReduction.Uses coalitionReduction;
+    private final MoveFiltering.Uses moveFiltering;
 
-    protected Player(Operator operator, Type type, int taxiTickets, int busTickets, int undergroundTickets) {
+    protected Player(Operator operator, Type type, int taxiTickets, int busTickets, int undergroundTickets,
+                     Playouts.Uses playout, CoalitionReduction.Uses coalitionReduction,
+                     MoveFiltering.Uses moveFiltering) {
         this.operator = operator;
         this.type = type;
         this.taxiTickets = taxiTickets;
         this.busTickets = busTickets;
         this.undergroundTickets = undergroundTickets;
+        this.playout = playout;
+        this.coalitionReduction = coalitionReduction;
+        this.moveFiltering = moveFiltering;
     }
 
     public int getTaxiTickets() {
@@ -101,6 +112,33 @@ public abstract class Player implements MctsDomainAgent<State> {
                 state.skipCurrentAgent();
         }
         return state;
+    }
+
+    public boolean usesBiasedPlayout () {
+        switch (playout) {
+            case RANDOM:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    public boolean usesCoalitionReduction() {
+        switch (coalitionReduction) {
+            case YES:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean usesMoveFiltering() {
+        switch (moveFiltering) {
+            case YES:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private Action getActionForCurrentPlayerType(State state) {

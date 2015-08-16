@@ -5,6 +5,9 @@ import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.Board;
 import io.github.nejc92.sy.game.State;
 import io.github.nejc92.sy.players.*;
+import io.github.nejc92.sy.strategies.CoalitionReduction;
+import io.github.nejc92.sy.strategies.MoveFiltering;
+import io.github.nejc92.sy.strategies.Playouts;
 
 import java.util.List;
 import java.util.Scanner;
@@ -86,9 +89,10 @@ public class ScotlandYard {
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
         Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new BiasedHiderMoveFiltering(hider);
+        players[0] = new Hider(hider, Playouts.Uses.BIASED, CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         for (int i = 1; i < players.length; i++)
-            players[i] = new BiasedSeekerCoalitionReduction(seeker, Seeker.Color.values()[i-1]);
+            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.BIASED,
+                    CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         return players;
     }
 
