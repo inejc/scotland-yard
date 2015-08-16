@@ -10,7 +10,7 @@ import java.util.List;
 public class Playouts {
 
     public enum Uses {
-        RANDOM, BIASED
+        BASIC, GREEDY
     }
 
     private static final double EPSILON = 0.2;

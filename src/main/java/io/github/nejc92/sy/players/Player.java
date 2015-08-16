@@ -120,7 +120,7 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     public boolean usesBiasedPlayout () {
         switch (playout) {
-            case RANDOM:
+            case BASIC:
                 return false;
             default:
                 return true;

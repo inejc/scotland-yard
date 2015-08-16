@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class ScotlandYard {
 
-    private static final int MCTS_ITERATIONS = 10000;
+    private static final int MCTS_ITERATIONS = 2500;
     private static final double HIDERS_EXPLORATION = 0.2;
     private static final double SEEKERS_EXPLORATION = 2;
     private static final int NUMBER_OF_PLAYERS = 6;
@@ -33,9 +33,8 @@ public class ScotlandYard {
         Scanner scanner = new Scanner(System.in);
         Mcts<State, Action, Player> mcts = initializeSearch();
         setHumanPlayer(scanner);
-        Player[] players = initializePlayers(humanType);
         for (int i = 0; i < numberOfGames; i++)
-            playOneGame(mcts, players, scanner);
+            playOneGame(mcts, scanner);
         System.out.println("Number of seeker's wins: " + numberOfSeekersWins
                 + ", number of hider's wins: " + numberOfHidersWins);
     }
@@ -79,6 +78,15 @@ public class ScotlandYard {
         System.out.print("How many games should be played?\nEnter number of games:\n");
     }
 
+    private static void playOneGame(Mcts<State, Action, Player> mcts, Scanner scanner) {
+        Player[] players = initializePlayers(humanType);
+        State state = State.initialize(players);
+        while (!state.isTerminal()) {
+            performOneAction(state, mcts, scanner);
+        }
+        saveAndPrintResult(state);
+    }
+
     private static Player[] initializePlayers(Player.Type humanType) {
         if (humanType == Player.Type.HIDER)
             return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.MCTS);
@@ -86,23 +94,16 @@ public class ScotlandYard {
             return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.HUMAN);
         else
             return initializePlayersWithOperator(Player.Operator.RANDOM, Player.Operator.RANDOM);
+        //  initializePlayersWithOperator(hider, seeker);
     }
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
         Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new Hider(hider, Playouts.Uses.RANDOM, CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
+        players[0] = new Hider(hider, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
         for (int i = 1; i < players.length; i++)
-            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.RANDOM,
+            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.BASIC,
                     CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
         return players;
-    }
-
-    private static void playOneGame(Mcts<State, Action, Player> mcts, Player[] players, Scanner scanner) {
-        State state = State.initialize(players);
-        while (!state.isTerminal()) {
-            performOneAction(state, mcts, scanner);
-        }
-        saveAndPrintResult(state);
     }
 
     private static void performOneAction(State state, Mcts<State, Action, Player> mcts, Scanner scanner) {
