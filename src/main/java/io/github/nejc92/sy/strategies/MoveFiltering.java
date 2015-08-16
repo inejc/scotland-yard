@@ -39,6 +39,8 @@ public class MoveFiltering {
     }
 
     public static boolean shouldUseBlackFareTicketGreedy() {
-        return Math.random() < SHOULD_USE_BLACK_FARE_TICKET_GREEDY_THRESHOLD;
+        // todo: fix getAvailableActions() first
+        // return Math.random() < SHOULD_USE_BLACK_FARE_TICKET_GREEDY_THRESHOLD;
+        return true;
     }
 }
