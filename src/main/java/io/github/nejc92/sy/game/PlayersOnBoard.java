@@ -106,6 +106,10 @@ public class PlayersOnBoard {
         return getPlayerAtIndex(playerIndex).isHuman();
     }
 
+    protected boolean playerIsRandom(int playerIndex) {
+        return getPlayerAtIndex(playerIndex).isRandom();
+    }
+
     protected boolean playerUsesCoalitionReduction(int playerIndex) {
         return getPlayerAtIndex(playerIndex).usesCoalitionReduction();
     }

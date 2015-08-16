@@ -83,6 +83,10 @@ public class State implements MctsDomainState<Action, Player> {
         return playersOnBoard.playerIsHuman(currentPlayerIndex);
     }
 
+    public boolean currentPlayerIsRandom() {
+        return playersOnBoard.playerIsRandom(currentPlayerIndex);
+    }
+
     public boolean previousPlayerIsHuman() {
         return playersOnBoard.playerIsHuman(previousPlayerIndex);
     }

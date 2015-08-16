@@ -28,17 +28,17 @@ public class PlayersOnBoardTest {
 
     private static Player[] initializePlayers() {
         Player[] players = new Player[6];
-        players[0] = new Hider(Player.Operator.COMPUTER, Playouts.Uses.BIASED,
+        players[0] = new Hider(Player.Operator.MCTS, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[1] = new Seeker(Player.Operator.COMPUTER, Seeker.Color.BLACK, Playouts.Uses.BIASED,
+        players[1] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLACK, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[2] = new Seeker(Player.Operator.COMPUTER, Seeker.Color.BLUE, Playouts.Uses.BIASED,
+        players[2] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLUE, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[3] = new Seeker(Player.Operator.COMPUTER, Seeker.Color.YELLOW, Playouts.Uses.BIASED,
+        players[3] = new Seeker(Player.Operator.MCTS, Seeker.Color.YELLOW, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[4] = new Seeker(Player.Operator.COMPUTER, Seeker.Color.RED, Playouts.Uses.BIASED,
+        players[4] = new Seeker(Player.Operator.MCTS, Seeker.Color.RED, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[5] = new Seeker(Player.Operator.COMPUTER, Seeker.Color.GREEN, Playouts.Uses.BIASED,
+        players[5] = new Seeker(Player.Operator.MCTS, Seeker.Color.GREEN, Playouts.Uses.BIASED,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         return players;
     }

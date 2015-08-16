@@ -10,7 +10,7 @@ import io.github.nejc92.sy.strategies.Playouts;
 public abstract class Player implements MctsDomainAgent<State> {
 
     public enum Operator {
-        HUMAN, COMPUTER
+        HUMAN, MCTS, RANDOM
     }
 
     public enum Type {
@@ -61,6 +61,10 @@ public abstract class Player implements MctsDomainAgent<State> {
 
     public boolean isHuman() {
         return operator == Operator.HUMAN;
+    }
+
+    public boolean isRandom() {
+        return operator == Operator.RANDOM;
     }
 
     public boolean hasTaxiTickets() {

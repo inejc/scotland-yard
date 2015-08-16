@@ -9,12 +9,13 @@ import io.github.nejc92.sy.strategies.CoalitionReduction;
 import io.github.nejc92.sy.strategies.MoveFiltering;
 import io.github.nejc92.sy.strategies.Playouts;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 public class ScotlandYard {
 
-    private static final int MCTS_ITERATIONS = 7000;
+    private static final int MCTS_ITERATIONS = 10000;
     private static final double HIDERS_EXPLORATION = 0.2;
     private static final double SEEKERS_EXPLORATION = 2;
     private static final int NUMBER_OF_PLAYERS = 6;
@@ -80,19 +81,19 @@ public class ScotlandYard {
 
     private static Player[] initializePlayers(Player.Type humanType) {
         if (humanType == Player.Type.HIDER)
-            return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.COMPUTER);
+            return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.MCTS);
         else if (humanType == Player.Type.SEEKER)
-            return initializePlayersWithOperator(Player.Operator.COMPUTER, Player.Operator.HUMAN);
+            return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.HUMAN);
         else
-            return initializePlayersWithOperator(Player.Operator.COMPUTER, Player.Operator.COMPUTER);
+            return initializePlayersWithOperator(Player.Operator.RANDOM, Player.Operator.RANDOM);
     }
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
         Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new Hider(hider, Playouts.Uses.BIASED, CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
+        players[0] = new Hider(hider, Playouts.Uses.RANDOM, CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
         for (int i = 1; i < players.length; i++)
-            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.BIASED,
-                    CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
+            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.RANDOM,
+                    CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
         return players;
     }
 
@@ -158,6 +159,19 @@ public class ScotlandYard {
     }
 
     private static Action getActionFromSearch(State state, Mcts<State, Action, Player> mcts) {
+        if (state.currentPlayerIsRandom())
+            return getRandomAction(state);
+        else
+            return getActionFromMctsSearch(state, mcts);
+    }
+
+    private static Action getRandomAction(State state) {
+        List<Action> actions = state.getAvailableActionsForCurrentAgent();
+        Collections.shuffle(actions);
+        return actions.get(0);
+    }
+
+    private static Action getActionFromMctsSearch(State state, Mcts<State, Action, Player> mcts) {
         Action mostPromisingAction;
         state.setSearchModeOn();
         updateHidersMostProbablePosition(state);
