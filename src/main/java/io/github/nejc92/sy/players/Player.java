@@ -39,14 +39,6 @@ public abstract class Player implements MctsDomainAgent<State> {
         this.moveFiltering = moveFiltering;
     }
 
-    public Operator getOperator() {
-        return operator;
-    }
-
-    public Playouts.Uses getPlayout() {
-        return playout;
-    }
-
     public int getTaxiTickets() {
         return taxiTickets;
     }

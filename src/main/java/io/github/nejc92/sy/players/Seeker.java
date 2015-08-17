@@ -65,7 +65,6 @@ public class Seeker extends Player {
 
     @Override
     public String toString() {
-        // return color + " Seeker";
-        return "Seekers";
+        return color + " Seeker";
     }
 }

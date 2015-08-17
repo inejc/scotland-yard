@@ -33,13 +33,10 @@ public class ScotlandYard {
         Scanner scanner = new Scanner(System.in);
         Mcts<State, Action, Player> mcts = initializeSearch();
         setHumanPlayer(scanner);
-        for (int j = 0; j < 17; j++) {
-            for (int i = 0; i < numberOfGames; i++)
-                playOneGame(mcts, scanner, j, i);
-            System.out.println("Number of seeker's wins: " + numberOfSeekersWins
-                    + ", number of hider's wins: " + numberOfHidersWins);
-            System.out.println();
-        }
+        for (int i = 0; i < numberOfGames; i++)
+            playOneGame(mcts, scanner);
+        System.out.println("Number of seeker's wins: " + numberOfSeekersWins
+                + ", number of hider's wins: " + numberOfHidersWins);
     }
 
     private static void printWelcomeText() {
@@ -81,80 +78,8 @@ public class ScotlandYard {
         System.out.print("How many games should be played?\nEnter number of games:\n");
     }
 
-    private static void playOneGame(Mcts<State, Action, Player> mcts, Scanner scanner, int mode, int game) {
-        Player[] players;
-        switch (mode) {
-            case 0:
-                players = initializePlayers(Player.Operator.RANDOM, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.RANDOM, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 1:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.RANDOM, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 2:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.NO,
-                        Player.Operator.RANDOM, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 3:
-                players = initializePlayers(Player.Operator.RANDOM, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 4:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 5:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 6:
-                players = initializePlayers(Player.Operator.RANDOM, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO);
-                break;
-            case 7:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO);
-                break;
-            case 8:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO);
-                break;
-            case 9:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.YES);
-                break;
-            case 10:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.YES);
-                break;
-            case 11:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.YES);
-                break;
-            case 12:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.NO,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.YES);
-                break;
-            case 13:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.YES,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 14:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.YES,
-                        Player.Operator.MCTS, Playouts.Uses.BASIC, CoalitionReduction.Uses.NO);
-                break;
-            case 15:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.BASIC, MoveFiltering.Uses.YES,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO);
-                break;
-            default:
-                players = initializePlayers(Player.Operator.MCTS, Playouts.Uses.GREEDY, MoveFiltering.Uses.YES,
-                        Player.Operator.MCTS, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO);
-                break;
-        }
-        if (game == 0)
-            printPlayers(players);
+    private static void playOneGame(Mcts<State, Action, Player> mcts, Scanner scanner) {
+        Player[] players = initializePlayers(humanType);
         State state = State.initialize(players);
         while (!state.isTerminal()) {
             performOneAction(state, mcts, scanner);
@@ -162,45 +87,22 @@ public class ScotlandYard {
         saveAndPrintResult(state);
     }
 
-    private static Player[] initializePlayers(Player.Operator hider, Playouts.Uses hp, MoveFiltering.Uses hmf,
-                                              Player.Operator seeker, Playouts.Uses sp, CoalitionReduction.Uses scr) {
-        /*if (humanType == Player.Type.HIDER)
+    private static Player[] initializePlayers(Player.Type humanType) {
+        if (humanType == Player.Type.HIDER)
             return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.MCTS);
         else if (humanType == Player.Type.SEEKER)
             return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.HUMAN);
-        else*/
-        // return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.MCTS);
-        //  initializePlayersWithOperator(hider, seeker);
-        Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new Hider(hider, hp, CoalitionReduction.Uses.NO, hmf);
-        for (int i = 1; i < players.length; i++)
-            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], sp,
-                    scr, MoveFiltering.Uses.NO);
-        return players;
+        else
+            return initializePlayersWithOperator(Player.Operator.RANDOM, Player.Operator.RANDOM);
     }
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
         Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new Hider(hider, Playouts.Uses.GREEDY, CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
+        players[0] = new Hider(hider, Playouts.Uses.GREEDY, CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         for (int i = 1; i < players.length; i++)
             players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.GREEDY,
-                    CoalitionReduction.Uses.NO, MoveFiltering.Uses.NO);
+                    CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         return players;
-    }
-
-    private static void printPlayers(Player[] players) {
-        for (int i = 0; i < 2; i++) {
-            Player player = players[i];
-            Playouts.Uses playout = player.getPlayout();
-            Player.Operator operator = player.getOperator();
-            boolean coalitionReduction = player.usesCoalitionReduction();
-            boolean moveFiltering = player.usesMoveFiltering();
-            if (operator == Player.Operator.RANDOM)
-                System.out.println(player + " " + operator);
-            else
-            System.out.println(player + " " + playout + " " + operator
-                    + " CR: " + coalitionReduction + " MV: " + moveFiltering);
-        }
     }
 
     private static void performOneAction(State state, Mcts<State, Action, Player> mcts, Scanner scanner) {
@@ -328,11 +230,11 @@ public class ScotlandYard {
     private static void saveAndPrintResult(State state) {
         if (state.seekersWon()) {
             numberOfSeekersWins++;
-            // System.out.println("Seekers won!");
+            System.out.println("Seekers won!");
         }
         else {
             numberOfHidersWins++;
-            // System.out.println("Hider won!");
+            System.out.println("Hider won!");
         }
     }
 }
