@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class ScotlandYard {
 
-    private static final int MCTS_ITERATIONS = 10000;
+    private static final int MCTS_ITERATIONS = 20000;
     private static final double HIDERS_EXPLORATION = 0.2;
     private static final double SEEKERS_EXPLORATION = 2;
     private static final int NUMBER_OF_PLAYERS = 6;
@@ -93,7 +93,7 @@ public class ScotlandYard {
         else if (humanType == Player.Type.SEEKER)
             return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.HUMAN);
         else
-            return initializePlayersWithOperator(Player.Operator.RANDOM, Player.Operator.RANDOM);
+            return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.MCTS);
     }
 
     private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
