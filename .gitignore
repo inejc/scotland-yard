@@ -13,3 +13,9 @@ hs_err_pid*
 .idea/
 /out/
 *.iml
+
+# VS Code
+.vscode/
+
+# Maven
+target/

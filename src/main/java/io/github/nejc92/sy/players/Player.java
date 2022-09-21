@@ -8,15 +8,25 @@ import io.github.nejc92.sy.strategies.MoveFiltering;
 import io.github.nejc92.sy.strategies.Playouts;
 
 public abstract class Player implements MctsDomainAgent<State> {
-
+    
     public enum Operator {
         HUMAN, MCTS, RANDOM
     }
 
     public enum Type {
-        HIDER, SEEKER
+        HIDER, SEEKER;
+
+        @Override
+        public String toString() {
+            return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
+        }
     }
 
+    public enum Color {
+        BLACK, BLUE, YELLOW, RED, GREEN, WHITE, ORANGE
+    }
+
+    protected final String name;
     private final Operator operator;
     private final Type type;
     private int taxiTickets;
@@ -26,11 +36,12 @@ public abstract class Player implements MctsDomainAgent<State> {
     private final CoalitionReduction.Uses coalitionReduction;
     private final MoveFiltering.Uses moveFiltering;
 
-    protected Player(Operator operator, Type type, int taxiTickets, int busTickets, int undergroundTickets,
+    protected Player(Operator operator, Type type, String name, int taxiTickets, int busTickets, int undergroundTickets,
                      Playouts.Uses playout, CoalitionReduction.Uses coalitionReduction,
                      MoveFiltering.Uses moveFiltering) {
         this.operator = operator;
         this.type = type;
+        this.name = name;
         this.taxiTickets = taxiTickets;
         this.busTickets = busTickets;
         this.undergroundTickets = undergroundTickets;
@@ -155,4 +166,10 @@ public abstract class Player implements MctsDomainAgent<State> {
     protected abstract Action getActionForHiderFromStatesAvailableActionsForSimulation(State state);
 
     protected abstract Action getActionForSeekerFromStatesAvailableActionsForSimulation(State state);
+
+    @Override
+    public String toString() {
+        
+        return String.format("%s '%s'", type.toString(), name);
+    }
 }
