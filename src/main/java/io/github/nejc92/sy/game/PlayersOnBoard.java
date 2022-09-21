@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public class PlayersOnBoard {
 
-    private static final int NUMBER_OF_PLAYERS = 6;
+    private static final int MINIMUM_NUMBER_OF_PLAYERS = 2;
     private static final int HIDERS_INDEX = 0;
     private static final int SKIP_HIDER = 1;
     private static final List<Integer> POSSIBLE_STARTING_POSITIONS = new ArrayList<>(
@@ -52,7 +52,7 @@ public class PlayersOnBoard {
     }
 
     private static boolean numberOfPlayersValid(Player[] players) {
-        return players.length == NUMBER_OF_PLAYERS;
+        return players.length >= MINIMUM_NUMBER_OF_PLAYERS;
     }
 
     private static boolean playerTypesValid(Player[] players) {
@@ -123,12 +123,11 @@ public class PlayersOnBoard {
     }
 
     public void printPlayers(int start) {
-        System.out.println("Players:");
         for (int i = start; i < players.length; i++) {
             System.out.println(players[i] + " on " + playersActualPositions[i] +
-                    " (taxi tickets: " + players[i].getTaxiTickets() +
-                    ", bus tickets: " + players[i].getBusTickets() +
-                    ", underground tickets: " + players[i].getUndergroundTickets() + ") ");
+                    " (" + Action.Transportation.TAXI + " tickets: " + players[i].getTaxiTickets() +
+                    ", " + Action.Transportation.BUS + " tickets: " + players[i].getBusTickets() +
+                    ", " + Action.Transportation.UNDERGROUND + " tickets: " + players[i].getUndergroundTickets() + ") ");
         }
         System.out.println();
     }

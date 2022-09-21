@@ -28,17 +28,17 @@ public class PlayersOnBoardTest {
 
     private static Player[] initializePlayers() {
         Player[] players = new Player[6];
-        players[0] = new Hider(Player.Operator.MCTS, Playouts.Uses.GREEDY,
+        players[0] = new Hider(Player.Operator.MCTS, "", Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[1] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLACK, Playouts.Uses.GREEDY,
+        players[1] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLACK.name(), Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[2] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLUE, Playouts.Uses.GREEDY,
+        players[2] = new Seeker(Player.Operator.MCTS, Seeker.Color.BLUE.name(), Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[3] = new Seeker(Player.Operator.MCTS, Seeker.Color.YELLOW, Playouts.Uses.GREEDY,
+        players[3] = new Seeker(Player.Operator.MCTS, Seeker.Color.YELLOW.name(), Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[4] = new Seeker(Player.Operator.MCTS, Seeker.Color.RED, Playouts.Uses.GREEDY,
+        players[4] = new Seeker(Player.Operator.MCTS, Seeker.Color.RED.name(), Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        players[5] = new Seeker(Player.Operator.MCTS, Seeker.Color.GREEN, Playouts.Uses.GREEDY,
+        players[5] = new Seeker(Player.Operator.MCTS, Seeker.Color.GREEN.name(), Playouts.Uses.GREEDY,
                 CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
         return players;
     }

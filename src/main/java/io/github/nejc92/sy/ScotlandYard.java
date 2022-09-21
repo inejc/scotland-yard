@@ -1,40 +1,48 @@
 package io.github.nejc92.sy;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
 import io.github.nejc92.mcts.Mcts;
 import io.github.nejc92.sy.game.Action;
 import io.github.nejc92.sy.game.Board;
 import io.github.nejc92.sy.game.State;
-import io.github.nejc92.sy.players.*;
+import io.github.nejc92.sy.players.Hider;
+import io.github.nejc92.sy.players.Player;
+import io.github.nejc92.sy.players.Player.Operator;
+import io.github.nejc92.sy.players.PlayerProvider;
 import io.github.nejc92.sy.strategies.CoalitionReduction;
 import io.github.nejc92.sy.strategies.MoveFiltering;
 import io.github.nejc92.sy.strategies.Playouts;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
 
 public class ScotlandYard {
 
     private static final int MCTS_ITERATIONS = 20000;
     private static final double HIDERS_EXPLORATION = 0.2;
     private static final double SEEKERS_EXPLORATION = 2;
-    private static final int NUMBER_OF_PLAYERS = 6;
     private static final int HUMAN_AS_HIDER = 1;
     private static final int HUMAN_AS_SEEKERS = 2;
     private static final int TEST_PLAYERS = 3;
 
     private static Player.Type humanType;
+    private static int numberOfPlayers = 0;
+    private static PlayerProvider playerProvider;
     private static int numberOfGames = 1;
     private static int numberOfSeekersWins = 0;
     private static int numberOfHidersWins = 0;
 
-    public static void main(String... args) {
+    public static void main(String... args) throws Exception {
         printWelcomeText();
         Scanner scanner = new Scanner(System.in);
         Mcts<State, Action, Player> mcts = initializeSearch();
+        playerProvider = new PlayerProvider()
+            .setPlayouts(Playouts.Uses.GREEDY)
+            .setCoalitionReduction(CoalitionReduction.Uses.YES)
+            .setMoveFiltering(MoveFiltering.Uses.YES);
         setHumanPlayer(scanner);
         for (int i = 0; i < numberOfGames; i++)
-            playOneGame(mcts, scanner);
+            playOneGame(playerProvider, mcts, scanner);
         System.out.println("Number of seeker's wins: " + numberOfSeekersWins
                 + ", number of hider's wins: " + numberOfHidersWins);
     }
@@ -54,15 +62,30 @@ public class ScotlandYard {
         return mcts;
     }
 
-    private static void setHumanPlayer(Scanner scanner) {
+    private static void setHumanPlayer(Scanner scanner) throws Exception {
         printSelectPlayerInstructions();
-        int humanInput = Integer.parseInt(scanner.nextLine());
-        if (humanInput == HUMAN_AS_HIDER)
+        int selectPlayerInput = Integer.parseInt(scanner.nextLine());
+        printSelectNumberOfPlayersInstructions();
+        numberOfPlayers = Integer.parseInt(scanner.nextLine());
+        int index = 0;
+        if (selectPlayerInput == HUMAN_AS_HIDER) {
             humanType = Player.Type.HIDER;
-        else if (humanInput == HUMAN_AS_SEEKERS)
+            printHumanPlayerNameInstructions();
+            playerProvider.addPlayer(Player.Type.HIDER, Operator.HUMAN, scanner.nextLine());
+            while (++index < numberOfPlayers)
+                playerProvider.addPlayer(Player.Type.SEEKER, Operator.MCTS);
+        } else if (selectPlayerInput == HUMAN_AS_SEEKERS) {
             humanType =  Player.Type.SEEKER;
-        else {
+            playerProvider.addPlayer(Player.Type.HIDER, Operator.MCTS); 
+            while (++index < numberOfPlayers) {
+                printHumanPlayerNameInstructions(index);
+                playerProvider.addPlayer(Player.Type.SEEKER, Operator.HUMAN, scanner.nextLine());
+            }
+        } else {
             humanType = null;
+            while (++index < numberOfPlayers)
+                playerProvider.addPlayer( index==1 ? Player.Type.HIDER : Player.Type.SEEKER
+                    , Operator.MCTS);
             printSelectNumberOfGamesInstructions();
             numberOfGames = Integer.parseInt(scanner.nextLine());
         }
@@ -74,35 +97,29 @@ public class ScotlandYard {
                 + "\nTo test players enter " + TEST_PLAYERS + "\nSelect player:\n");
     }
 
+    private static void printSelectNumberOfPlayersInstructions() {
+        System.out.print("How many players in the game? This includes both seekers and hiders.\nEnter number of players:\n");
+    }
+
     private static void printSelectNumberOfGamesInstructions() {
         System.out.print("How many games should be played?\nEnter number of games:\n");
     }
 
-    private static void playOneGame(Mcts<State, Action, Player> mcts, Scanner scanner) {
-        Player[] players = initializePlayers(humanType);
+    private static void printHumanPlayerNameInstructions() {
+        System.out.print("Enter the name of player (leave blank to auto-fill):\n");
+    }
+
+    private static void printHumanPlayerNameInstructions(int index) {
+        System.out.printf("Enter the name of player %d (leave blank to auto-fill):\n", index);
+    }
+
+    private static void playOneGame(PlayerProvider playerProvider, Mcts<State, Action, Player> mcts, Scanner scanner) {
+        Player[] players = playerProvider.initializePlayers();
         State state = State.initialize(players);
         while (!state.isTerminal()) {
             performOneAction(state, mcts, scanner);
         }
         saveAndPrintResult(state);
-    }
-
-    private static Player[] initializePlayers(Player.Type humanType) {
-        if (humanType == Player.Type.HIDER)
-            return initializePlayersWithOperator(Player.Operator.HUMAN, Player.Operator.MCTS);
-        else if (humanType == Player.Type.SEEKER)
-            return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.HUMAN);
-        else
-            return initializePlayersWithOperator(Player.Operator.MCTS, Player.Operator.MCTS);
-    }
-
-    private static Player[] initializePlayersWithOperator(Player.Operator hider, Player.Operator seeker) {
-        Player[] players = new Player[NUMBER_OF_PLAYERS];
-        players[0] = new Hider(hider, Playouts.Uses.GREEDY, CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        for (int i = 1; i < players.length; i++)
-            players[i] = new Seeker(seeker, Seeker.Color.values()[i-1], Playouts.Uses.GREEDY,
-                    CoalitionReduction.Uses.YES, MoveFiltering.Uses.YES);
-        return players;
     }
 
     private static void performOneAction(State state, Mcts<State, Action, Player> mcts, Scanner scanner) {
@@ -119,12 +136,10 @@ public class ScotlandYard {
 
     private static void printBeforeMove(State state) {
         state.printNewRound();
-        System.out.println("\nCurrent player: " + state.getCurrentAgent() + "\n");
         if (humanType == Player.Type.HIDER)
             state.printAllPositions();
         else
             state.printSeekersPositions();
-
     }
 
     private static boolean currentPlayerCanMove(State state) {
@@ -149,7 +164,7 @@ public class ScotlandYard {
     private static void printInputActionInstructions(State state) {
         System.out.println("Available actions:");
         printAvailableActions(state.getAvailableActionsForCurrentAgent());
-        System.out.print("Enter action:\n");
+        System.out.printf("Enter action for %s:\n", state.getCurrentAgent());
     }
 
     private static void printAvailableActions(List<Action> actions) {
@@ -201,9 +216,9 @@ public class ScotlandYard {
 
     private static void printSelectedAction(State state, Action action) {
         if (humanType == Player.Type.HIDER || state.isHiderSurfacesRound())
-            System.out.println(action + "\n");
+            System.out.println(state.getCurrentAgent() + ": " + action + "\n");
         else
-            System.out.println(action.getTransportation() + "\n");
+            System.out.println(state.getCurrentAgent() + ": " + action.getTransportation() + "\n");
     }
 
     private static void askHumanForDoubleMove(State state, Scanner scanner) {
@@ -236,5 +251,6 @@ public class ScotlandYard {
             numberOfHidersWins++;
             System.out.println("Hider won!");
         }
+        state.printAllPositions();
     }
 }

@@ -13,17 +13,10 @@ public class Seeker extends Player {
     private static final int UNDERGROUND_TICKETS = 4;
     private static final double COALITION_REDUCTION_PARAMETER = 0.25;
 
-    public enum Color {
-        BLACK, BLUE, YELLOW, RED, GREEN
-    }
-
-    private final Color color;
-
-    public Seeker(Operator operator, Color color, Playouts.Uses playout, CoalitionReduction.Uses coalitionReduction,
+    public Seeker(Operator operator, String name, Playouts.Uses playout, CoalitionReduction.Uses coalitionReduction,
                   MoveFiltering.Uses moveFiltering) {
-        super(operator, Type.SEEKER, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS, playout,
+        super(operator, Type.SEEKER, name, TAXI_TICKETS, BUS_TICKETS, UNDERGROUND_TICKETS, playout,
                 coalitionReduction, moveFiltering);
-        this.color = color;
     }
 
     @Override
@@ -55,16 +48,11 @@ public class Seeker extends Player {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seeker seeker = (Seeker) o;
-        return color == seeker.color;
+        return this.name.equals(seeker.name);
     }
 
     @Override
     public int hashCode() {
-        return color != null ? color.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return color + " Seeker";
+        return name != null ? name.hashCode() : 0;
     }
 }
